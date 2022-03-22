@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -euox pipefail
+
+usage() {
+  >&2 echo "Usage: $0 -c [db config name (default: default)] [migration name]"
+  exit 1
+}
+
+pgname="default"
+while getopts "c:" flag
+do
+  case $flag in
+    c)
+      pgname="$OPTARG"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+shift $((OPTIND-1))
+
+if [ $# -gt 1 ]; then
+  tpe=$2
+
+  if [ "$tpe" != "sql" ] && [ "$tpe" != "go" ]; then
+    >&2 echo "Only sql and go are allowed as second argument"
+    exit 1
+  fi
+fi
+
+if [ $# -lt 1 ]; then
+  usage
+fi
+
+mkdir -p "migrations/$pgname"
+goose -dir "migrations/$pgname" postgres "$(config-get postgres.databases."$pgname".url)" create "$1" "${2-sql}"
