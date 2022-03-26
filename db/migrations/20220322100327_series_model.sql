@@ -6,7 +6,12 @@ COMMENT ON EXTENSION postgis IS 'Add support for geometry and geospatial indexin
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 COMMENT ON EXTENSION "uuid-ossp" IS 'Add support for uuid extra type';
 
+CREATE EXTENSION IF NOT EXISTS "pg_trgm";
+COMMENT ON EXTENSION "pg_trgm" IS 'Add support for simple text search, by text similarity';
+
+-- TODO: enable full text search on desriptions
 -- check if container enables this
+-- extension not available on heroku
 -- CREATE EXTENSION IF NOT EXISTS semver;
 
 CREATE TABLE nomenclatures(
@@ -29,7 +34,7 @@ CREATE TABLE all_nomenclatures(
     title json NOT NULL,
     description_short json NOT NULL DEFAULT '{}',
     description_long json NOT NULL DEFAULT '{}',
-    metadata jsonb NOT NULL DEFAULT '{}'
+    metadata json NOT NULL DEFAULT '{}'
 );
 
 COMMENT ON TABLE nomenclatures IS 'A list of all nomenclature classes, with some UI metadata consumed by admin interfaces';
@@ -51,7 +56,7 @@ INSERT INTO all_nomenclatures(class, table_name, title, metadata) VALUES
      '{"from_template":true, "has_zero_many_class": {"MDOMAIN": "measurement_has_measurement_domains"}}'),
   ('MDOMAIN', 'measurement_domains', '{"fr": "domaines de mesure", "en" :"measurement domains"}',
      '{"from_template":true}'),
-  ('MDIMENSIONS', 'measurement_dimensions', '{"fr": "dimensions de mesures physiques", "en" :"phyiscal measurements dimensions"}',
+  ('MDIMENSIONS', 'measurement_dimensions', '{"fr": "dimensions de mesures physiques", "en" :"physical measurements dimensions"}',
      '{"from_template":true}'),
   ('MUSYSTEM', 'measurement_unit_systems', '{"fr": "systèmes d''unités de mesure", "en" :"measurement unit systems"}',
      '{"from_template":true}'),
@@ -62,7 +67,9 @@ INSERT INTO all_nomenclatures(class, table_name, title, metadata) VALUES
   ('STATUS', 'object_statuses', '{"fr": "statuts d''un object", "en" :"object statuses"}',
      '{"from_template":true}'),
   ('OSTATUS', 'owner_statuses', '{"fr": "statuts utilisateurs", "en" :"user statuses"}',
-     '{"from_template":true}')
+     '{"from_template":true}'),
+  ('CONSTANT', 'constants', '{"fr": "constantes physiques et mathématiques", "en" :"physical and mathematical constants"}',
+     '{"from_template":true, "extra_fields": ["symbol", "value", "metadata", "measurement_unit_id"], "has_zero_one_class": {"MUNIT": "measurement_unit_id"}}')
 ;
 
 CREATE TABLE owner_statuses(LIKE nomenclatures INCLUDING ALL);
@@ -70,7 +77,7 @@ CREATE TABLE owner_statuses(LIKE nomenclatures INCLUDING ALL);
 INSERT INTO owner_statuses(short_code, title) VALUES
   ('ACTIVE', '{"fr": "actif", "en": "active"}'),
   ('DISABLED', '{"fr": "désactivé", "en": "disabled"}'),
-  ('LOCKED', '{"fr": "verouillé", "en": "locked"}')
+  ('LOCKED', '{"fr": "verrouillé", "en": "locked"}')
 ;
 
 -- TODO: link external users
@@ -78,8 +85,8 @@ CREATE TABLE owners(
     id uuid NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
     name text NOT NULL UNIQUE,
     email text NOT NULL UNIQUE,
-    owner_status_id text REFERENCES owner_status_code(id),
-    audit_trail json
+    owner_status_id integer NOT NULL REFERENCES owner_statuses(id),
+    audit_trail json NOT NULL DEFAULT '{}'
 );
 
 COMMENT ON TABLE owners IS 'Registered owners of the timeseries data';
@@ -126,7 +133,7 @@ ALTER TABLE data_sources
   ADD COLUMN
     ratings integer NOT NULL DEFAULT 0,
   ADD COLUMN
-    tags jsonb NOT NULL DEFAULT '{}'
+    tags json NOT NULL DEFAULT '{}'
 ;
 
 INSERT INTO data_sources(short_code, title) VALUES
@@ -142,7 +149,7 @@ UPDATE data_sources SET audit_trail = json_build_object(
 );
 
 -- make tags searchable
-CREATE INDEX data_sources_by_tag ON data_sources USING gin(tags);
+CREATE INDEX data_sources_by_tag ON data_sources USING gist((tags::text) gist_trgm_ops);
 
 CREATE TABLE zone_types(LIKE nomenclatures INCLUDING ALL);
 
@@ -170,7 +177,6 @@ ALTER TABLE zones
     zone_geometry geometry(Geometry,4326)
 ;
 
--- TODO: versioned zones
 INSERT INTO zones(short_code, title,zone_type_id) VALUES
 ('WORLD' , '{"fr": "Monde", "en": "World"}', (SELECT id FROM zone_types WHERE short_code='WORLD')),
 --
@@ -224,7 +230,7 @@ CREATE TABLE measurement_dimensions(LIKE nomenclatures INCLUDING ALL);
 
 COMMENT ON TABLE measurement_dimensions IS 'Universal dimensions for physical and economic measurements';
 
-INSERT INTO measurements_dimensions(short_code, title) VALUES
+INSERT INTO measurement_dimensions(short_code, title) VALUES
 ('L', '{"fr": "longueur", "en": "length"}'),
 ('M', '{"fr": "masse", "en": "mass"}'),
 ('T', '{"fr": "temps", "en": "time"}'),
@@ -295,9 +301,8 @@ INSERT INTO measurement_domains(short_code, title) VALUES
 ('AUTOMOTIVE', '{"fr": "automobile", "en":"automotive"}'),
 ('CHEMISTRY', '{"fr": "chimie", "en":"chemistry"}'),
 ('CLIMATE', '{"fr": "climat", "en":"climate"}'),
-('COMMON', '{"fr": "communs", "en":"common"}'),
+('COMMON', '{"fr": "domaine commun", "en":"common domain"}'),
 ('CONSTRUCTION', '{"fr": "construction", "en":"construction"}'),
-('FINANCE', '{"fr": "finance", "en":"finance"}'),
 ('ELECTRICITY', '{"fr": "électricité", "en":"electricity"}'),
 ('ENERGY', '{"fr": "énergie", "en":"energy"}'),
 ('ENGINEERING', '{"fr": "ingéniérie", "en":"engineering"}'),
@@ -352,7 +357,7 @@ INSERT INTO measurement_unit_systems(short_code, title) VALUES
 ('METRIC', '{"fr": "système métrique", "en":"metric system"}'),
 ('IMPERIAL', '{"fr": "système impérial (US)", "en":"impérial system (US)"}'),
 ('BSU', '{"fr": "système britanique (UK)", "en":"British standard system (US)"}'),
-('DOMAIN', '{"fr": "unité usuelle", "en":"customary unit"}')
+('DOMAIN', '{"fr": "unité usuelle", "en":"customary unit"}'),
 ('NONE', '{"fr": "aucun système", "en":"no system"}')
 ;
 
@@ -367,6 +372,7 @@ ALTER TABLE measurement_unit_multipliers
 ;
 
 INSERT INTO measurement_unit_multipliers(short_code, title,factor) VALUES
+('', '{"fr": "", "en":""}', 1),
 ('a', '{"fr": "atto", "en":"atto"}', 1E-18),
 ('f', '{"fr": "femto", "en":"femto"}', 1E-15),
 ('p', '{"fr": "pico", "en":"pico"}', 1E-12),
@@ -375,7 +381,6 @@ INSERT INTO measurement_unit_multipliers(short_code, title,factor) VALUES
 ('m', '{"fr": "milli", "en":"milli"}', 1E-3),
 ('c', '{"fr": "centi", "en":"centi"}', 1E-2),
 ('d', '{"fr": "deci", "en":"deci"}', 1E-1),
-('', '{"fr": "", "en":""}', 1),
 ('da', '{"fr": "deca", "en":"deca"}', 1E1),
 ('h', '{"fr": "hecto", "en":"hecto"}', 1E2),
 ('k', '{"fr": "kilo", "en":"kilo"}', 1E3),
@@ -391,18 +396,24 @@ UPDATE measurement_unit_multipliers SET audit_trail = json_build_object(
 );
 
 CREATE TABLE measurement_units(LIKE nomenclatures INCLUDING ALL);
+
+COMMENT ON TABLE measurement_units IS 'Units for all quantities, amounts and measurements';
+
 ALTER TABLE measurement_units
   ADD COLUMN
     measurement_id integer NOT NULL REFERENCES measurements(id),
   ADD COLUMN
     measurement_unit_system_id integer REFERENCES measurement_unit_systems(id),
   ADD COLUMN
-    multiplier_included integer REFERENCES measurement_unit_multipliers(id),
+    included_multiplier_id integer REFERENCES measurement_unit_multipliers(id),
   ADD COLUMN
     is_standard bool NOT NULL DEFAULT false,
   ADD COLUMN
-    metadata jsonb NOT NULL DEFAULT '{}'
+    metadata json NOT NULL DEFAULT '{}'
 ;
+
+COMMENT ON COLUMN measurement_units.included_multiplier_id IS 'This unit already factors in a multiplier of the base unit, e.g. km';
+COMMENT ON COLUMN measurement_units.metadata IS 'Additional data for rendering, such as aliases as UTF-8 glyphs';
 
 -- TODO: unit aliases
 -- TODO: unit compounds e.g. m.s-1
@@ -500,7 +511,10 @@ INSERT INTO measurement_units(short_code, title, measurement_id) VALUES
 ;
 
 UPDATE measurement_units SET measurement_unit_system_id = (SELECT id FROM measurement_unit_systems WHERE short_code = 'NONE');
+UPDATE measurement_units SET included_multiplier_id = (SELECT id FROM measurement_unit_multipliers WHERE short_code = '');
+
 ALTER TABLE measurement_units ALTER COLUMN measurement_unit_system_id SET NOT NULL;
+ALTER TABLE measurement_units ALTER COLUMN included_multiplier_id SET NOT NULL;
 
 UPDATE measurement_units SET is_standard = true
 WHERE
@@ -531,7 +545,7 @@ CREATE INDEX measurement_unit_conversions_reverse_idx ON measurement_unit_has_co
 CREATE TABLE themes(LIKE nomenclatures INCLUDING ALL);
 ALTER TABLE themes
   ADD COLUMN
-    tags jsonb,
+    tags json,
   ADD COLUMN
     linked_documents json
 ;
@@ -572,7 +586,7 @@ INSERT INTO themes(short_code, title, tags) VALUES
 ;
 
 -- make tags searchable
-CREATE INDEX themes_by_tag ON data_sources USING gin(tags);
+CREATE INDEX themes_by_tag ON data_sources USING gist((tags::text) gist_trgm_ops);
 
 CREATE TABLE object_statuses(LIKE nomenclatures INCLUDING ALL);
 
@@ -598,10 +612,16 @@ CREATE TABLE series (
     status_change_reason json NOT NULL DEFAULT '{}',
     zone_id integer NOT NULL REFERENCES zones(id),
     data_source_id integer NOT NULL REFERENCES data_sources(id),
-    tags jsonb NOT NULL DEFAULT '{}',
+    tags json NOT NULL DEFAULT '{}',
     linked_documents json,
     audit_trail jsonb NOT NULL DEFAULT '{}'
 );
+
+-- make tags searchable
+CREATE INDEX series_by_tag ON series USING gist((tags::text) gist_trgm_ops);
+
+-- make audit_trail searchable
+CREATE INDEX series_by_audit ON series USING gin(audit_trail);
 
 CREATE TABLE series_has_themes (
     series_id integer NOT NULL REFERENCES series(id),
@@ -673,7 +693,7 @@ CREATE TABLE series_produces_versions (
     version_owner_id uuid NOT NULL REFERENCES owners(id),
     version_status_id integer NOT NULL REFERENCES object_statuses(id),
     version_data_source_id integer NOT NULL REFERENCES data_sources(id),
-    version_parent_versioned_id REFERENCES series_produces_versions(versioned_series_id),
+    version_parent_versioned_id uuid REFERENCES series_produces_versions(versioned_series_id),
     formula text,
     version_status_change_reason json NOT NULL DEFAULT '{}',
     version_title json,
@@ -692,11 +712,19 @@ CREATE TABLE versioned_timeseries (
     PRIMARY KEY(versioned_series_id, started_at)
 );
 
+COMMENT ON TABLE versioned_timeseries IS 'Holds all versions of all timeseries';
+COMMENT ON COLUMN versioned_timeseries.value IS 'For simple series, the numerical value relevant over the period (started_at, started_at+{series period})';
+COMMENT ON COLUMN versioned_timeseries.values IS 'For vector series and non-numerical series, the value relevant over the period (started_at, started_at+{series period}). Values is of the following form, all keys being optional: {"v": [{numeric, ...}]}, "k": [{text values, ...}, {key}: {value}...]';
+COMMENT ON COLUMN versioned_timeseries.collapsed_values IS 'A timeseries collapsed in an array on a single row. Supported formats: [{"{date}": {value}}, ...] (ISO date), [{"{date}": {{values object}}}]';
+
 CREATE VIEW versioned_timeseries_bounds AS
   SELECT
     versioned_series_id,
+    -- TODO: case expression for collapsed series
     MIN(started_at) AS min_started_at,
     MAX(started_at) AS max_started_at
+  FROM
+    versioned_timeseries
   GROUP BY versioned_series_id
 ;
 -- +goose StatementEnd
