@@ -9,16 +9,21 @@ info:
     such as units etc.
 
     Timeseries publication status and ownership may be modified.
+
+    Only extra administrative operations are exposed here (e.g. updating nomenclatures).
+
+    Regular data retrieval remains carried out by the public API.
+
   version: 'v0.0.1'
   termsOfService: |
     TODO
-  licence:
+  license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
-  contact: 
-    name: Frédéric BIDON (Shifter, volunteer) 
+  contact:
+    name: Frédéric BIDON (Shifter, volunteer)
     email: fredbi@yahoo.com
-    url: TODO
+    url: https://github.com/fredbi
 
 schemes:
   - https
@@ -34,7 +39,9 @@ securityDefinitions:
     flow: accessCode
     authorizationUrl: 'https://myidentityprovider.org/protocol/openid-connect/authorize'
     tokenUrl: 'https://myidentityprovider/protocol/openid-connect/token'
-    scopes: {'email'}
+    scopes:
+      'openid': "Authorize the API to inquire about standard OpenID claims"
+      'email': "Authorize the API to inquire about the user's email"
 
 security:
   - bearerToken: []
@@ -43,8 +50,288 @@ externalDocs:
   description: Climate Timeseries API concepts
   url: https://github.io/wiki/TODO
 
-parameters:
-  $ref: parameters.yaml
+tags:
+  - name: classes
+    description: |
+      Classes represent the various nomenclatures used by the time series, such as
+      measurement units and data sources.
 
-responses:
-  $ref: responses.yaml
+    externalDocs:
+      description: |
+        API concepts: classes.
+
+      url: https://github.io/wiki/TODO
+
+  - name: conversions
+    description: |
+      Unit conversion logic.
+
+paths:
+  /classes/{classId}:
+    put:
+      tags: [classes]
+      summary: Update descriptive metadata about a nomenclature class
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classDescriptionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Metadata about nomenclature classes successfully updated.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/classDescription'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /classes/{classId}/members:
+    post:
+      tags: [classes]
+      summary: Add a new member in a nomenclature class
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classMemberInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '201':
+          description: |
+            Class members added.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly created resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the newly created resource.
+              type: integer
+              format: int64
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /classes/{classId}/members/{classMemberId}:
+    put:
+      tags: [classes]
+      summary: Update a member of a nomenclature class
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inpath/classMemberInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classMemberInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Class members updated.
+
+          headers:
+            Location:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    delete:
+      tags: [classes]
+      summary: Removes a member from a nomenclature class
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inpath/classMemberInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classMemberInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Class members successfully deleted.
+
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /conversion/{fromUnit}/{toUnit}:
+    post:
+      tags: [conversions]
+      summary: Creates add new conversion specification from unit to unit.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/fromUnitInPath'
+        - $ref: 'parameters.yaml#/params/inpath/toUnitInPath'
+        - $ref: 'parameters.yaml#/params/inbody/conversionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '201':
+          description: |
+            Unit conversion added
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    put:
+      tags: [conversions]
+      summary: Update an existing conversion specification from unit to unit.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/fromUnitInPath'
+        - $ref: 'parameters.yaml#/params/inpath/toUnitInPath'
+        - $ref: 'parameters.yaml#/params/inbody/conversionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Unit conversion updated.
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /conversion:
+    post:
+      tags: [conversions]
+      summary: Creates add new conversion specification from unit to unit.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inquery/fromUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inbody/conversionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '201':
+          description: |
+            Unit conversion added
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    put:
+      tags: [conversions]
+      summary: Update an existing conversion specification from unit to unit.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inquery/fromUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inbody/conversionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Unit conversion updated.
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'

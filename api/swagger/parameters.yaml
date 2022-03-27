@@ -69,6 +69,16 @@ params:
         - zone
         - ztype
     
+    classMemberInPath: &classMemberId
+      name: classMemberId
+      description: |
+        The unique identifier of a class member.
+
+      in: path
+      type: integer
+      format: int64
+      required: true
+
     themeInPath: &theme
       name: theme
       description: |
@@ -117,6 +127,28 @@ params:
         Filter the result by search for a given keyword, whenever tag search is applicable.
     
         This parameter has no effect on objects where tag search is not applicable.
+    
+      in: path
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
+    fromUnitInPath:
+      name: fromUnit
+      description: |
+        Original unit to be converted.
+    
+      in: path
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
+    toUnitInPath:
+      name: toUnit
+      description: |
+        Original unit to be converted.
     
       in: path
       type: string
@@ -300,6 +332,28 @@ params:
       minLength: 1
       maxLength: 100
     
+    fromUnitInQuery:
+      name: fromUnit
+      description: |
+        Original unit to be converted.
+    
+      in: query
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
+    toUnitInQuery:
+      name: toUnit
+      description: |
+        Original unit to be converted.
+    
+      in: query
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
   inbody:
     seriesInBody:
       name: series
@@ -330,5 +384,35 @@ params:
       required: true
       schema:
         $ref: 'timeseries-models.yaml#/definitions/tsValues'
+    
+    classDescriptionInBody:
+      name: classDescription
+      description: |
+        Class descriptive metadata.
+    
+      in: body
+      required: true
+      schema:
+        $ref: 'timeseries-models.yaml#/definitions/classDescription'
+
+    classMemberInBody:
+      name: classMember
+      description: |
+        Class member metadata.
+    
+      in: body
+      required: true
+      schema:
+        $ref: 'timeseries-models.yaml#/definitions/class'
+
+    conversionInBody:
+      name: conversionSpec
+      description: |
+        Unit conversion specification.
+    
+      in: body
+      required: true
+      schema:
+        $ref: 'timeseries-models.yaml#/definitions/conversionSpec'
      
 # TODO: windowing

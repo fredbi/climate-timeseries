@@ -89,6 +89,16 @@ tags:
 
       url: https://github.io/wiki/TODO#semver
 
+  - name: conversions
+    description: |
+      Unit conversion logic.
+
+    externalDocs:
+      description: |
+        API concepts: unit conversions.
+
+      url: https://github.io/wiki/TODO#unitconversions
+
 paths:
   /classes:
     get:
@@ -382,6 +392,8 @@ paths:
                 The UUID of the newly created versioned resource.
               type: string
               format: uuid
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
         '400':
           $ref: 'responses.yaml#/responses/badRequest'
         '401':
@@ -758,6 +770,8 @@ paths:
                 The ID of the updated resource.
               type: integer
               format: int64
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
         '400':
           $ref: 'responses.yaml#/responses/badRequest'
         '401':
@@ -958,6 +972,8 @@ paths:
                 The ID of the updated resource.
               type: integer
               format: int64
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
         '400':
           $ref: 'responses.yaml#/responses/badRequest'
         '401':
@@ -1129,6 +1145,78 @@ paths:
 
           schema:
             $ref: 'timeseries-models.yaml#/definitions/entities'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /conversion/{fromUnit}/{toUnit}:
+    get:
+      tags: [conversions]
+      summary: Get the conversion specification from unit to unit.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/fromUnitInPath'
+        - $ref: 'parameters.yaml#/params/inpath/toUnitInPath'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            A unit conversion specification
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/conversionSpec'
+
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /conversion:
+    get:
+      tags: [conversions]
+      summary: Get the conversion specification from unit to unit.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inquery/fromUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            A unit conversion specification
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/conversion'
+
         '400':
           $ref: 'responses.yaml#/responses/badRequest'
         '401':
