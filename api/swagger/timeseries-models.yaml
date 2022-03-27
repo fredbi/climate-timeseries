@@ -243,6 +243,7 @@ definitions:
       type: Entities
       import:
         package: github.com/fredbi/climate-timeseries/pkg/restapi/models/polymorphs
+        alias: polymorphs
    
   conversion:
     description: |
