@@ -88,7 +88,7 @@ A collection of nomenclature classes.
 
 */
 type GetClassesOK struct {
-	Payload []models.Class
+	Payload []models.ClassNomenclature
 }
 
 // IsSuccess returns true when this get classes o k response has a 2xx status code
@@ -124,14 +124,14 @@ func (o *GetClassesOK) String() string {
 	return fmt.Sprintf("[GET /classes][%d] getClassesOK  %+v", 200, o.Payload)
 }
 
-func (o *GetClassesOK) GetPayload() []models.Class {
+func (o *GetClassesOK) GetPayload() []models.ClassNomenclature {
 	return o.Payload
 }
 
 func (o *GetClassesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload as interface type
-	payload, err := models.UnmarshalClassSlice(response.Body(), consumer)
+	payload, err := models.UnmarshalClassNomenclatureSlice(response.Body(), consumer)
 	if err != nil {
 		return err
 	}

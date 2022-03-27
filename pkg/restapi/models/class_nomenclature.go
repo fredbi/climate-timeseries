@@ -19,10 +19,10 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Class class
+// ClassNomenclature class nomenclature
 //
-// swagger:discriminator class shortCode
-type Class interface {
+// swagger:discriminator classNomenclature shortCode
+type ClassNomenclature interface {
 	runtime.Validatable
 	runtime.ContextValidatable
 
@@ -46,8 +46,8 @@ type Class interface {
 
 	// short code
 	// Required: true
-	ShortCode() ClassName
-	SetShortCode(ClassName)
+	ShortCode() ClassNomenclatureName
+	SetShortCode(ClassNomenclatureName)
 
 	// title
 	// Required: true
@@ -58,7 +58,7 @@ type Class interface {
 	// At this moment, the base type property is pushed down to the subtype
 }
 
-type class struct {
+type classNomenclature struct {
 	auditTrailField *Audit
 
 	descriptionLongField Translation
@@ -67,80 +67,80 @@ type class struct {
 
 	idField int64
 
-	shortCodeField ClassName
+	shortCodeField ClassNomenclatureName
 
 	titleField Translation
 }
 
 // AuditTrail gets the audit trail of this polymorphic type
-func (m *class) AuditTrail() *Audit {
+func (m *classNomenclature) AuditTrail() *Audit {
 	return m.auditTrailField
 }
 
 // SetAuditTrail sets the audit trail of this polymorphic type
-func (m *class) SetAuditTrail(val *Audit) {
+func (m *classNomenclature) SetAuditTrail(val *Audit) {
 	m.auditTrailField = val
 }
 
 // DescriptionLong gets the description long of this polymorphic type
-func (m *class) DescriptionLong() Translation {
+func (m *classNomenclature) DescriptionLong() Translation {
 	return m.descriptionLongField
 }
 
 // SetDescriptionLong sets the description long of this polymorphic type
-func (m *class) SetDescriptionLong(val Translation) {
+func (m *classNomenclature) SetDescriptionLong(val Translation) {
 	m.descriptionLongField = val
 }
 
 // DescriptionShort gets the description short of this polymorphic type
-func (m *class) DescriptionShort() Translation {
+func (m *classNomenclature) DescriptionShort() Translation {
 	return m.descriptionShortField
 }
 
 // SetDescriptionShort sets the description short of this polymorphic type
-func (m *class) SetDescriptionShort(val Translation) {
+func (m *classNomenclature) SetDescriptionShort(val Translation) {
 	m.descriptionShortField = val
 }
 
 // ID gets the id of this polymorphic type
-func (m *class) ID() int64 {
+func (m *classNomenclature) ID() int64 {
 	return m.idField
 }
 
 // SetID sets the id of this polymorphic type
-func (m *class) SetID(val int64) {
+func (m *classNomenclature) SetID(val int64) {
 	m.idField = val
 }
 
 // ShortCode gets the short code of this polymorphic type
-func (m *class) ShortCode() ClassName {
-	return "class"
+func (m *classNomenclature) ShortCode() ClassNomenclatureName {
+	return "classNomenclature"
 }
 
 // SetShortCode sets the short code of this polymorphic type
-func (m *class) SetShortCode(val ClassName) {
+func (m *classNomenclature) SetShortCode(val ClassNomenclatureName) {
 }
 
 // Title gets the title of this polymorphic type
-func (m *class) Title() Translation {
+func (m *classNomenclature) Title() Translation {
 	return m.titleField
 }
 
 // SetTitle sets the title of this polymorphic type
-func (m *class) SetTitle(val Translation) {
+func (m *classNomenclature) SetTitle(val Translation) {
 	m.titleField = val
 }
 
-// UnmarshalClassSlice unmarshals polymorphic slices of Class
-func UnmarshalClassSlice(reader io.Reader, consumer runtime.Consumer) ([]Class, error) {
+// UnmarshalClassNomenclatureSlice unmarshals polymorphic slices of ClassNomenclature
+func UnmarshalClassNomenclatureSlice(reader io.Reader, consumer runtime.Consumer) ([]ClassNomenclature, error) {
 	var elements []json.RawMessage
 	if err := consumer.Consume(reader, &elements); err != nil {
 		return nil, err
 	}
 
-	var result []Class
+	var result []ClassNomenclature
 	for _, element := range elements {
-		obj, err := unmarshalClass(element, consumer)
+		obj, err := unmarshalClassNomenclature(element, consumer)
 		if err != nil {
 			return nil, err
 		}
@@ -149,17 +149,17 @@ func UnmarshalClassSlice(reader io.Reader, consumer runtime.Consumer) ([]Class, 
 	return result, nil
 }
 
-// UnmarshalClass unmarshals polymorphic Class
-func UnmarshalClass(reader io.Reader, consumer runtime.Consumer) (Class, error) {
+// UnmarshalClassNomenclature unmarshals polymorphic ClassNomenclature
+func UnmarshalClassNomenclature(reader io.Reader, consumer runtime.Consumer) (ClassNomenclature, error) {
 	// we need to read this twice, so first into a buffer
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
-	return unmarshalClass(data, consumer)
+	return unmarshalClassNomenclature(data, consumer)
 }
 
-func unmarshalClass(data []byte, consumer runtime.Consumer) (Class, error) {
+func unmarshalClassNomenclature(data []byte, consumer runtime.Consumer) (ClassNomenclature, error) {
 	buf := bytes.NewBuffer(data)
 	buf2 := bytes.NewBuffer(data)
 
@@ -177,8 +177,8 @@ func unmarshalClass(data []byte, consumer runtime.Consumer) (Class, error) {
 
 	// The value of shortCode is used to determine which type to create and unmarshal the data into
 	switch getType.ShortCode {
-	case "class":
-		var result class
+	case "classNomenclature":
+		var result classNomenclature
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
@@ -283,8 +283,8 @@ func unmarshalClass(data []byte, consumer runtime.Consumer) (Class, error) {
 	return nil, errors.New(422, "invalid shortCode value: %q", getType.ShortCode)
 }
 
-// Validate validates this class
-func (m *class) Validate(formats strfmt.Registry) error {
+// Validate validates this class nomenclature
+func (m *classNomenclature) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAuditTrail(formats); err != nil {
@@ -313,7 +313,7 @@ func (m *class) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *class) validateAuditTrail(formats strfmt.Registry) error {
+func (m *classNomenclature) validateAuditTrail(formats strfmt.Registry) error {
 	if swag.IsZero(m.AuditTrail()) { // not required
 		return nil
 	}
@@ -332,7 +332,7 @@ func (m *class) validateAuditTrail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *class) validateDescriptionLong(formats strfmt.Registry) error {
+func (m *classNomenclature) validateDescriptionLong(formats strfmt.Registry) error {
 	if swag.IsZero(m.DescriptionLong()) { // not required
 		return nil
 	}
@@ -351,7 +351,7 @@ func (m *class) validateDescriptionLong(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *class) validateDescriptionShort(formats strfmt.Registry) error {
+func (m *classNomenclature) validateDescriptionShort(formats strfmt.Registry) error {
 	if swag.IsZero(m.DescriptionShort()) { // not required
 		return nil
 	}
@@ -370,7 +370,7 @@ func (m *class) validateDescriptionShort(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *class) validateID(formats strfmt.Registry) error {
+func (m *classNomenclature) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", int64(m.ID())); err != nil {
 		return err
@@ -379,7 +379,7 @@ func (m *class) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *class) validateTitle(formats strfmt.Registry) error {
+func (m *classNomenclature) validateTitle(formats strfmt.Registry) error {
 
 	if err := validate.Required("title", "body", m.Title()); err != nil {
 		return err
@@ -399,8 +399,8 @@ func (m *class) validateTitle(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this class based on the context it is used
-func (m *class) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this class nomenclature based on the context it is used
+func (m *classNomenclature) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateAuditTrail(ctx, formats); err != nil {
@@ -419,6 +419,10 @@ func (m *class) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateShortCode(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateTitle(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -429,7 +433,7 @@ func (m *class) ContextValidate(ctx context.Context, formats strfmt.Registry) er
 	return nil
 }
 
-func (m *class) contextValidateAuditTrail(ctx context.Context, formats strfmt.Registry) error {
+func (m *classNomenclature) contextValidateAuditTrail(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.AuditTrail() != nil {
 		if err := m.AuditTrail().ContextValidate(ctx, formats); err != nil {
@@ -445,7 +449,7 @@ func (m *class) contextValidateAuditTrail(ctx context.Context, formats strfmt.Re
 	return nil
 }
 
-func (m *class) contextValidateDescriptionLong(ctx context.Context, formats strfmt.Registry) error {
+func (m *classNomenclature) contextValidateDescriptionLong(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.DescriptionLong().ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
@@ -459,7 +463,7 @@ func (m *class) contextValidateDescriptionLong(ctx context.Context, formats strf
 	return nil
 }
 
-func (m *class) contextValidateDescriptionShort(ctx context.Context, formats strfmt.Registry) error {
+func (m *classNomenclature) contextValidateDescriptionShort(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.DescriptionShort().ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
@@ -473,7 +477,7 @@ func (m *class) contextValidateDescriptionShort(ctx context.Context, formats str
 	return nil
 }
 
-func (m *class) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
+func (m *classNomenclature) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := validate.ReadOnly(ctx, "id", "body", int64(m.ID())); err != nil {
 		return err
@@ -482,7 +486,21 @@ func (m *class) contextValidateID(ctx context.Context, formats strfmt.Registry) 
 	return nil
 }
 
-func (m *class) contextValidateTitle(ctx context.Context, formats strfmt.Registry) error {
+func (m *classNomenclature) contextValidateShortCode(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.ShortCode().ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("shortCode")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("shortCode")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *classNomenclature) contextValidateTitle(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.Title().ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {

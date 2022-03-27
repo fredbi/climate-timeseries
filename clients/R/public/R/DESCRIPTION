@@ -1,0 +1,12 @@
+Package: swagger
+Title: R Package Client for Climate time series API
+Version: 1.0.0
+Authors@R: person("Swagger Codegen community", email = "apiteam@swagger.io", role = c("aut", "cre"))
+Description: The API allows the public to search and consult time series about climate change research conducted by TheShiftProject.  The climate time series API allows contributors to upload time series about their climate change models and studies.  Other secured endpoints allows admins to maintain the nomenclatures used by the climate time series, such as units etc. Timeseries publication status and ownership is for now managed by admins. 
+Depends: R (>= 3.3.3)
+Encoding: UTF-8
+License: Unlicense
+LazyData: true
+Suggests: testthat
+Imports: jsonlite, httr, R6
+RoxygenNote: 6.0.1.9000

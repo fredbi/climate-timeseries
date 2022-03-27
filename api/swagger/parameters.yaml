@@ -403,7 +403,7 @@ params:
       in: body
       required: true
       schema:
-        $ref: 'timeseries-models.yaml#/definitions/class'
+        $ref: 'timeseries-models.yaml#/definitions/classNomenclature'
 
     conversionInBody:
       name: conversionSpec

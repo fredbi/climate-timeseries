@@ -72,7 +72,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "timeseries-models.yaml#/definitions/class"
+                "$ref": "timeseries-models.yaml#/definitions/classNomenclature"
               }
             }
           },
@@ -249,7 +249,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "timeseries-models.yaml#/definitions/class"
+                "$ref": "timeseries-models.yaml#/definitions/classNomenclature"
               }
             }
           },
@@ -2112,7 +2112,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/class"
+                "$ref": "#/definitions/classNomenclature"
               }
             }
           },
@@ -2427,7 +2427,7 @@ func init() {
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/class"
+                "$ref": "#/definitions/classNomenclature"
               }
             }
           },
@@ -2511,7 +2511,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/class"
+              "$ref": "#/definitions/classNomenclature"
             }
           }
         ],
@@ -2624,7 +2624,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/class"
+              "$ref": "#/definitions/classNomenclature"
             }
           }
         ],
@@ -2732,7 +2732,7 @@ func init() {
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/class"
+              "$ref": "#/definitions/classNomenclature"
             }
           }
         ],
@@ -4980,36 +4980,6 @@ func init() {
       },
       "readOnly": true
     },
-    "class": {
-      "type": "object",
-      "required": [
-        "id",
-        "shortCode",
-        "title"
-      ],
-      "properties": {
-        "auditTrail": {
-          "$ref": "#/definitions/audit"
-        },
-        "descriptionLong": {
-          "$ref": "#/definitions/translation"
-        },
-        "descriptionShort": {
-          "$ref": "#/definitions/translation"
-        },
-        "id": {
-          "type": "integer",
-          "readOnly": true
-        },
-        "shortCode": {
-          "$ref": "#/definitions/className"
-        },
-        "title": {
-          "$ref": "#/definitions/translation"
-        }
-      },
-      "discriminator": "shortCode"
-    },
     "classDescription": {
       "description": "Metadata about nomenture classes.\n",
       "type": "object",
@@ -5023,7 +4993,7 @@ func init() {
       ],
       "properties": {
         "class": {
-          "$ref": "#/definitions/className"
+          "$ref": "#/definitions/classNomenclatureName"
         },
         "descriptionLong": {
           "$ref": "#/definitions/translation"
@@ -5078,7 +5048,38 @@ func init() {
         }
       }
     },
-    "className": {
+    "classNomenclature": {
+      "type": "object",
+      "required": [
+        "id",
+        "shortCode",
+        "title"
+      ],
+      "properties": {
+        "auditTrail": {
+          "$ref": "#/definitions/audit"
+        },
+        "descriptionLong": {
+          "$ref": "#/definitions/translation"
+        },
+        "descriptionShort": {
+          "$ref": "#/definitions/translation"
+        },
+        "id": {
+          "type": "integer",
+          "readOnly": true
+        },
+        "shortCode": {
+          "$ref": "#/definitions/classNomenclatureName"
+        },
+        "title": {
+          "$ref": "#/definitions/translation"
+        }
+      },
+      "discriminator": "shortCode"
+    },
+    "classNomenclatureName": {
+      "type": "string",
       "enum": [
         "constant",
         "mdimension",
@@ -5213,7 +5214,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "$ref": "#/definitions/extra"
@@ -5226,7 +5227,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "type": "object",
@@ -5256,7 +5257,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "$ref": "#/definitions/extra"
@@ -5278,7 +5279,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "type": "object",
@@ -5317,7 +5318,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "$ref": "#/definitions/extra"
@@ -5330,7 +5331,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "$ref": "#/definitions/extra"
@@ -5343,7 +5344,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "type": "object",
@@ -5380,7 +5381,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "$ref": "#/definitions/extra"
@@ -5485,7 +5486,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "type": "object",
@@ -5514,7 +5515,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "type": "object",
@@ -5642,7 +5643,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "type": "object",
@@ -5666,7 +5667,7 @@ func init() {
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/class"
+          "$ref": "#/definitions/classNomenclature"
         },
         {
           "$ref": "#/definitions/extra"

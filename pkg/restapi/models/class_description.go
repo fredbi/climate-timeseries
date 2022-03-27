@@ -22,7 +22,7 @@ type ClassDescription struct {
 
 	// class
 	// Required: true
-	Class ClassName `json:"class"`
+	Class *ClassNomenclatureName `json:"class"`
 
 	// description long
 	// Required: true
@@ -81,8 +81,23 @@ func (m *ClassDescription) Validate(formats strfmt.Registry) error {
 
 func (m *ClassDescription) validateClass(formats strfmt.Registry) error {
 
-	if m.Class == nil {
-		return errors.Required("class", "body", nil)
+	if err := validate.Required("class", "body", m.Class); err != nil {
+		return err
+	}
+
+	if err := validate.Required("class", "body", m.Class); err != nil {
+		return err
+	}
+
+	if m.Class != nil {
+		if err := m.Class.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("class")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("class")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -181,6 +196,10 @@ func (m *ClassDescription) validateTitle(formats strfmt.Registry) error {
 func (m *ClassDescription) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateClass(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateDescriptionLong(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -200,6 +219,22 @@ func (m *ClassDescription) ContextValidate(ctx context.Context, formats strfmt.R
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ClassDescription) contextValidateClass(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Class != nil {
+		if err := m.Class.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("class")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("class")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

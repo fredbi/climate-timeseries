@@ -77,12 +77,12 @@ func (m *Mdimension) SetID(val int64) {
 }
 
 // ShortCode gets the short code of this subtype
-func (m *Mdimension) ShortCode() ClassName {
+func (m *Mdimension) ShortCode() ClassNomenclatureName {
 	return "mdimension"
 }
 
 // SetShortCode sets the short code of this subtype
-func (m *Mdimension) SetShortCode(val ClassName) {
+func (m *Mdimension) SetShortCode(val ClassNomenclatureName) {
 }
 
 // Title gets the title of this subtype
@@ -119,7 +119,7 @@ func (m *Mdimension) UnmarshalJSON(raw []byte) error {
 
 		ID int64 `json:"id"`
 
-		ShortCode ClassName `json:"shortCode"`
+		ShortCode ClassNomenclatureName `json:"shortCode"`
 
 		Title Translation `json:"title"`
 	}
@@ -176,7 +176,7 @@ func (m Mdimension) MarshalJSON() ([]byte, error) {
 
 		ID int64 `json:"id"`
 
-		ShortCode ClassName `json:"shortCode"`
+		ShortCode ClassNomenclatureName `json:"shortCode"`
 
 		Title Translation `json:"title"`
 	}{
@@ -400,6 +400,20 @@ func (m *Mdimension) contextValidateDescriptionShort(ctx context.Context, format
 func (m *Mdimension) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := validate.ReadOnly(ctx, "id", "body", int64(m.ID())); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Mdimension) contextValidateShortCode(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.ShortCode().ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("shortCode")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("shortCode")
+		}
 		return err
 	}
 

@@ -92,7 +92,7 @@ type PutClassesClassIDMembersClassMemberIDParams struct {
 	   Class member metadata.
 
 	*/
-	ClassMember models.Class
+	ClassMember models.ClassNomenclature
 
 	/* ClassMemberID.
 
@@ -168,13 +168,13 @@ func (o *PutClassesClassIDMembersClassMemberIDParams) SetClassID(classID string)
 }
 
 // WithClassMember adds the classMember to the put classes class ID members class member ID params
-func (o *PutClassesClassIDMembersClassMemberIDParams) WithClassMember(classMember models.Class) *PutClassesClassIDMembersClassMemberIDParams {
+func (o *PutClassesClassIDMembersClassMemberIDParams) WithClassMember(classMember models.ClassNomenclature) *PutClassesClassIDMembersClassMemberIDParams {
 	o.SetClassMember(classMember)
 	return o
 }
 
 // SetClassMember adds the classMember to the put classes class ID members class member ID params
-func (o *PutClassesClassIDMembersClassMemberIDParams) SetClassMember(classMember models.Class) {
+func (o *PutClassesClassIDMembersClassMemberIDParams) SetClassMember(classMember models.ClassNomenclature) {
 	o.ClassMember = classMember
 }
 

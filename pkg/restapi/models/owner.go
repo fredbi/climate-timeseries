@@ -93,12 +93,12 @@ func (m *Owner) SetID(val int64) {
 }
 
 // ShortCode gets the short code of this subtype
-func (m *Owner) ShortCode() ClassName {
+func (m *Owner) ShortCode() ClassNomenclatureName {
 	return "owner"
 }
 
 // SetShortCode sets the short code of this subtype
-func (m *Owner) SetShortCode(val ClassName) {
+func (m *Owner) SetShortCode(val ClassNomenclatureName) {
 }
 
 // Title gets the title of this subtype
@@ -154,7 +154,7 @@ func (m *Owner) UnmarshalJSON(raw []byte) error {
 
 		ID int64 `json:"id"`
 
-		ShortCode ClassName `json:"shortCode"`
+		ShortCode ClassNomenclatureName `json:"shortCode"`
 
 		Title Translation `json:"title"`
 	}
@@ -239,7 +239,7 @@ func (m Owner) MarshalJSON() ([]byte, error) {
 
 		ID int64 `json:"id"`
 
-		ShortCode ClassName `json:"shortCode"`
+		ShortCode ClassNomenclatureName `json:"shortCode"`
 
 		Title Translation `json:"title"`
 	}{
@@ -536,6 +536,20 @@ func (m *Owner) contextValidateDescriptionShort(ctx context.Context, formats str
 func (m *Owner) contextValidateID(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := validate.ReadOnly(ctx, "id", "body", int64(m.ID())); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Owner) contextValidateShortCode(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.ShortCode().ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("shortCode")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("shortCode")
+		}
 		return err
 	}
 

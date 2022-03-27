@@ -64,7 +64,7 @@ type PostClassesClassIDMembersParams struct {
 	  Required: true
 	  In: body
 	*/
-	ClassMember models.Class
+	ClassMember models.ClassNomenclature
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -83,7 +83,7 @@ func (o *PostClassesClassIDMembersParams) BindRequest(r *http.Request, route *mi
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		body, err := models.UnmarshalClass(r.Body, route.Consumer)
+		body, err := models.UnmarshalClassNomenclature(r.Body, route.Consumer)
 		if err != nil {
 			if err == io.EOF {
 				err = errors.Required("classMember", "body", "")

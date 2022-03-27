@@ -38,11 +38,14 @@ There are 2 APIs:
 * [go](clients/go)
 * R
 * python
+* typescript-node
 * ...
 
 > Prioritize R to be used primarily for data visualization.
 >
 > Investigate API integration for Jupyter.
+
+TODO: figure out how to publish these package on each language repo (R, pypi, npm)
 
 ### Authentication
 

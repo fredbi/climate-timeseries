@@ -91,7 +91,7 @@ type PostClassesClassIDMembersParams struct {
 	   Class member metadata.
 
 	*/
-	ClassMember models.Class
+	ClassMember models.ClassNomenclature
 
 	timeout    time.Duration
 	Context    context.Context
@@ -158,13 +158,13 @@ func (o *PostClassesClassIDMembersParams) SetClassID(classID string) {
 }
 
 // WithClassMember adds the classMember to the post classes class ID members params
-func (o *PostClassesClassIDMembersParams) WithClassMember(classMember models.Class) *PostClassesClassIDMembersParams {
+func (o *PostClassesClassIDMembersParams) WithClassMember(classMember models.ClassNomenclature) *PostClassesClassIDMembersParams {
 	o.SetClassMember(classMember)
 	return o
 }
 
 // SetClassMember adds the classMember to the post classes class ID members params
-func (o *PostClassesClassIDMembersParams) SetClassMember(classMember models.Class) {
+func (o *PostClassesClassIDMembersParams) SetClassMember(classMember models.ClassNomenclature) {
 	o.ClassMember = classMember
 }
 

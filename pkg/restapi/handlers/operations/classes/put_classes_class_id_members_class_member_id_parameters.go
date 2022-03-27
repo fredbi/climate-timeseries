@@ -65,7 +65,7 @@ type PutClassesClassIDMembersClassMemberIDParams struct {
 	  Required: true
 	  In: body
 	*/
-	ClassMember models.Class
+	ClassMember models.ClassNomenclature
 	/*The unique identifier of a class member.
 
 	  Required: true
@@ -90,7 +90,7 @@ func (o *PutClassesClassIDMembersClassMemberIDParams) BindRequest(r *http.Reques
 
 	if runtime.HasBody(r) {
 		defer r.Body.Close()
-		body, err := models.UnmarshalClass(r.Body, route.Consumer)
+		body, err := models.UnmarshalClassNomenclature(r.Body, route.Consumer)
 		if err != nil {
 			if err == io.EOF {
 				err = errors.Required("classMember", "body", "")

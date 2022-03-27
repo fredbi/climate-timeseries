@@ -27,7 +27,7 @@ type GetClassesClassIDMembersOK struct {
 	/*
 	  In: Body
 	*/
-	Payload []models.Class `json:"body,omitempty"`
+	Payload []models.ClassNomenclature `json:"body,omitempty"`
 }
 
 // NewGetClassesClassIDMembersOK creates GetClassesClassIDMembersOK with default headers values
@@ -37,13 +37,13 @@ func NewGetClassesClassIDMembersOK() *GetClassesClassIDMembersOK {
 }
 
 // WithPayload adds the payload to the get classes class Id members o k response
-func (o *GetClassesClassIDMembersOK) WithPayload(payload []models.Class) *GetClassesClassIDMembersOK {
+func (o *GetClassesClassIDMembersOK) WithPayload(payload []models.ClassNomenclature) *GetClassesClassIDMembersOK {
 	o.Payload = payload
 	return o
 }
 
 // SetPayload sets the payload to the get classes class Id members o k response
-func (o *GetClassesClassIDMembersOK) SetPayload(payload []models.Class) {
+func (o *GetClassesClassIDMembersOK) SetPayload(payload []models.ClassNomenclature) {
 	o.Payload = payload
 }
 
@@ -54,7 +54,7 @@ func (o *GetClassesClassIDMembersOK) WriteResponse(rw http.ResponseWriter, produ
 	payload := o.Payload
 	if payload == nil {
 		// return empty array
-		payload = make([]models.Class, 0, 50)
+		payload = make([]models.ClassNomenclature, 0, 50)
 	}
 
 	if err := producer.Produce(rw, payload); err != nil {

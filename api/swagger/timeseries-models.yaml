@@ -8,7 +8,8 @@ definitions:
       - PENDINGV
       - PENDINGP
 
-  className:
+  classNomenclatureName:
+    type: string
     enum:
       - constant
       - mdimension
@@ -298,7 +299,7 @@ definitions:
       message: 
         type: string
   
-  class:
+  classNomenclature:
     type: object
     discriminator: shortCode
     required: [id,shortCode,title]
@@ -307,7 +308,7 @@ definitions:
         type: integer
         readOnly: true
       shortCode:
-        $ref: '#/definitions/className'
+        $ref: '#/definitions/classNomenclatureName'
       title:
         $ref: '#/definitions/translation'
       descriptionShort:
@@ -352,7 +353,7 @@ definitions:
     required: [class,tableName,title,descriptionShort,descriptionLong,metadata]
     properties:
       class:
-        $ref: '#/definitions/className'
+        $ref: '#/definitions/classNomenclatureName'
       tableName:
         type: string
       title:
@@ -370,7 +371,7 @@ definitions:
       Mathematical and physical constants.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         required: [symbol,value,metadata]
         properties:
@@ -404,7 +405,7 @@ definitions:
       Domains also apply to constants.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -416,7 +417,7 @@ definitions:
       For more, see https://en.wikipedia.org/wiki/SI_base_unit.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         properties:
     x-nullable: false
@@ -443,7 +444,7 @@ definitions:
       Series of ratios (e.g. % increase of GDP) are not considered measurements. They shall use special units which do not refer to measurements.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         properties:
           dimensions:
@@ -464,7 +465,7 @@ definitions:
       Multipliers using to prefix measurement units (e.g. m,c,d,da,h,k,M,G...).
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -474,7 +475,7 @@ definitions:
       Measurement unit systems.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -484,7 +485,7 @@ definitions:
       Measurement units are used to quantify values provided by time series.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         required: [isStandard]
         properties:
@@ -510,7 +511,7 @@ definitions:
       Status of owners.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -520,7 +521,7 @@ definitions:
       Owners are the maintainers of timeseries and nomenclatures.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         required: [uuid,name,email,ownerStatus]
         properties:
@@ -544,7 +545,7 @@ definitions:
       A period describe the periodicity of a time series, e.g. quarterly, yearly, ...
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -554,7 +555,7 @@ definitions:
       Roles qualify how owners contribute to this or that piece of data.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -564,7 +565,7 @@ definitions:
       Data sources.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         properties:
           rating:
@@ -586,7 +587,7 @@ definitions:
       Object statuses.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false
 
@@ -596,7 +597,7 @@ definitions:
       Climate themes.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         properties:
           tags:
@@ -615,7 +616,7 @@ definitions:
       Geographical zones.
 
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - type: object
         required: [zoneType]
         properties:
@@ -630,6 +631,6 @@ definitions:
     description: |
       Typology of geographical zones (e.g. world, country, ...)
     allOf:
-      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/classNomenclature'
       - $ref: '#/definitions/extra'
     x-nullable: false

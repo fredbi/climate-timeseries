@@ -88,7 +88,7 @@ Nomenclature class members.
 
 */
 type GetClassesClassIDMembersOK struct {
-	Payload []models.Class
+	Payload []models.ClassNomenclature
 }
 
 // IsSuccess returns true when this get classes class Id members o k response has a 2xx status code
@@ -124,14 +124,14 @@ func (o *GetClassesClassIDMembersOK) String() string {
 	return fmt.Sprintf("[GET /classes/{classId}/members][%d] getClassesClassIdMembersOK  %+v", 200, o.Payload)
 }
 
-func (o *GetClassesClassIDMembersOK) GetPayload() []models.Class {
+func (o *GetClassesClassIDMembersOK) GetPayload() []models.ClassNomenclature {
 	return o.Payload
 }
 
 func (o *GetClassesClassIDMembersOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload as interface type
-	payload, err := models.UnmarshalClassSlice(response.Body(), consumer)
+	payload, err := models.UnmarshalClassNomenclatureSlice(response.Body(), consumer)
 	if err != nil {
 		return err
 	}

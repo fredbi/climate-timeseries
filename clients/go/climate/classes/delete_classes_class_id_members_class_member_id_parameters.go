@@ -92,7 +92,7 @@ type DeleteClassesClassIDMembersClassMemberIDParams struct {
 	   Class member metadata.
 
 	*/
-	ClassMember models.Class
+	ClassMember models.ClassNomenclature
 
 	/* ClassMemberID.
 
@@ -168,13 +168,13 @@ func (o *DeleteClassesClassIDMembersClassMemberIDParams) SetClassID(classID stri
 }
 
 // WithClassMember adds the classMember to the delete classes class ID members class member ID params
-func (o *DeleteClassesClassIDMembersClassMemberIDParams) WithClassMember(classMember models.Class) *DeleteClassesClassIDMembersClassMemberIDParams {
+func (o *DeleteClassesClassIDMembersClassMemberIDParams) WithClassMember(classMember models.ClassNomenclature) *DeleteClassesClassIDMembersClassMemberIDParams {
 	o.SetClassMember(classMember)
 	return o
 }
 
 // SetClassMember adds the classMember to the delete classes class ID members class member ID params
-func (o *DeleteClassesClassIDMembersClassMemberIDParams) SetClassMember(classMember models.Class) {
+func (o *DeleteClassesClassIDMembersClassMemberIDParams) SetClassMember(classMember models.ClassNomenclature) {
 	o.ClassMember = classMember
 }
 

@@ -7,7 +7,7 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-type Entities []models.Class
+type Entities []models.ClassNomenclature
 
 func (m Entities) Validate(formats strfmt.Registry) error {
 	return nil
