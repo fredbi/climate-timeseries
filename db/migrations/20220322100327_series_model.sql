@@ -141,7 +141,7 @@ INSERT INTO data_sources(short_code, title) VALUES
   ('SHIFT', '{"fr": "TheShiftProject", "en": "TheShiftProject"}'),
   ('SHIFTERS', '{"fr": "Shifters (bénévoles)", "en": "Shifters (volunteers)"}'),
   ('RTE', '{"fr": "RTE (Réseau de Transport d''Electricité, France)", "en": "RTE (France''s energy transmission system operator)"}'),
-  ('EDF', '{"fr": "EDF (Electricité de France)", "en": "EDF (France''s electricity generation utility)"}')
+  ('EDF', '{"fr": "EDF (Electricité de France)", "en": "EDF (France''s electricity generation utility)"}'),
   ('EGEDA', '{"fr": "Expert Group on Energy Data and Analysis (EGEDA)", "en": "Expert Group on Energy Data and Analysis (EGEDA)"}'),
   ('WORLDBANK', '{"fr": "Banque Mondiale", "en": "World Bank"}'),
   ('IMF', '{"fr": "Fond Monétaire International (FMI)", "en": "International Monetary Fund (IMF)"}'),
