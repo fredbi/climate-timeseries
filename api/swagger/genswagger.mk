@@ -1,8 +1,9 @@
 TARGET=./pkg/restapi
-CLIENTS_TARGET=./clients/go
+CLIENT_TARGET=./clients/go
 SPEC_DIR=api/swagger
 HANDLERS=handlers
 MODELS_PKG=github.com/fredbi/climate-timeseries/pkg/restapi/models
+CLIENT_PKG=public
 SPEC_MODELS=$(SPEC_DIR)/timeseries-models.yaml
 SPEC_API=$(SPEC_DIR)/timeseries.yaml
 
@@ -42,7 +43,7 @@ generate-go-client:
 		--default-scheme https \
 		--name 'climate change API' \
 		--strict-responders \
-		--client-package $(HANDLERS) \
+		--client-package $(CLIENT_PKG) \
 		--skip-models \
 		--existing-models $(MODELS_PKG) \
-		--target $(TARGET)
+		--target $(CLIENT_TARGET)
