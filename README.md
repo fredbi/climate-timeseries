@@ -1,6 +1,6 @@
 # climate-timeseries `[en]`
 
-[fr](README.fr.md)[en](README.md)
+[fr](README.fr.md)` | `[en](README.md)
 
 ## Primer
 
@@ -22,7 +22,7 @@ As an ancillary goal, this project aims to substitute a richer data-sharing plat
 Eventually, we'd like to store and distribute data from Europe used by the book
 [Décabornons! 9 propositions pour que l'Europe change d'ère](https://www.amazon.com/dp/2738138802).
 
-## Contributing
+## How to contribute
 TODO
 
 ## API
@@ -36,9 +36,9 @@ There are 2 APIs:
 ### Available API clients
 
 * [go](clients/go)
-* R
-* python
-* typescript-node
+* [R](clients/R)
+* [python](clients/python)
+* [typescript-node](clients/typescript-node)
 * ...
 
 > Prioritize R to be used primarily for data visualization.

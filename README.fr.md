@@ -1,14 +1,14 @@
 # climate-timeseries `[fr]`
 
-[fr](README.fr.md)[en](README.md)
+[fr](README.fr.md)` | `[en](README.md)
 
 ## Introduction
 
 > _Avertissement_
 >
-> Tout ce qui suit est rédigé dans la hate pour atteindre un premier déploiement
+> Tout ce qui suit a été rédigé dans la hate pour atteindre un premier déploiement
 > "minimum viable". Dans cette phase initiale, je vous prie de rester indulgents 
-> vis à vis des erreurs ou du manque de clarté.
+> vis à vis des erreurs mineures ou du manque de clarté.
 
 Ce projet construit une base de données et une API exposant 
 les séries de données manipulées par [TheShiftProject](www.theshiftproject.org).
