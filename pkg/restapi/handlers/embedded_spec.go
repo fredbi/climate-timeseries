@@ -223,6 +223,114 @@ func init() {
         }
       }
     },
+    "/conversion": {
+      "get": {
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Get the conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inquery/fromUnitInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/toUnitInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/deepInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/briefInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/auditInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A unit conversion specification\n",
+            "schema": {
+              "$ref": "timeseries-models.yaml#/definitions/conversion"
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      }
+    },
+    "/conversion/{fromUnit}/{toUnit}": {
+      "get": {
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Get the conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/fromUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inpath/toUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/deepInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/briefInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/auditInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A unit conversion specification\n",
+            "schema": {
+              "$ref": "timeseries-models.yaml#/definitions/conversionSpec"
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      }
+    },
     "/search/tags": {
       "get": {
         "tags": [
@@ -621,6 +729,9 @@ func init() {
           "405": {
             "$ref": "responses.yaml#/responses/notAllowed"
           },
+          "409": {
+            "$ref": "responses.yaml#/responses/conflict"
+          },
           "500": {
             "$ref": "responses.yaml#/responses/internalError"
           },
@@ -850,6 +961,9 @@ func init() {
           "405": {
             "$ref": "responses.yaml#/responses/notAllowed"
           },
+          "409": {
+            "$ref": "responses.yaml#/responses/conflict"
+          },
           "500": {
             "$ref": "responses.yaml#/responses/internalError"
           },
@@ -1058,6 +1172,9 @@ func init() {
           },
           "405": {
             "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "409": {
+            "$ref": "responses.yaml#/responses/conflict"
           },
           "500": {
             "$ref": "responses.yaml#/responses/internalError"
@@ -1440,6 +1557,14 @@ func init() {
         "description": "API concepts: semver.\n",
         "url": "https://github.io/wiki/TODO#semver"
       }
+    },
+    {
+      "description": "Unit conversion logic.\n",
+      "name": "conversions",
+      "externalDocs": {
+        "description": "API concepts: unit conversions.\n",
+        "url": "https://github.io/wiki/TODO#unitconversions"
+      }
     }
   ]
 }`))
@@ -1738,6 +1863,174 @@ func init() {
               "items": {
                 "$ref": "#/definitions/class"
               }
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      }
+    },
+    "/conversion": {
+      "get": {
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Get the conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "fromUnit",
+            "in": "query",
+            "required": true
+          },
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "toUnit",
+            "in": "query",
+            "required": true
+          },
+          {
+            "type": "boolean",
+            "description": "When deep is specified, the response will contain a deep representation of the object, rather than just a shallow description.\n",
+            "name": "deep",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "When brief is specified, the response will only contain essential data and strip long descriptions.\n",
+            "name": "brief",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "When audit is specified, the response will also contain the audit trail field.\n",
+            "name": "audit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A unit conversion specification\n",
+            "schema": {
+              "$ref": "#/definitions/conversion"
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      }
+    },
+    "/conversion/{fromUnit}/{toUnit}": {
+      "get": {
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Get the conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "fromUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "toUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "boolean",
+            "description": "When deep is specified, the response will contain a deep representation of the object, rather than just a shallow description.\n",
+            "name": "deep",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "When brief is specified, the response will only contain essential data and strip long descriptions.\n",
+            "name": "brief",
+            "in": "query"
+          },
+          {
+            "type": "boolean",
+            "description": "When audit is specified, the response will also contain the audit trail field.\n",
+            "name": "audit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A unit conversion specification\n",
+            "schema": {
+              "$ref": "#/definitions/conversionSpec"
             }
           },
           "400": {
@@ -2359,6 +2652,9 @@ func init() {
           "405": {
             "description": "MethodNotAllowed\n"
           },
+          "409": {
+            "description": "Resource already exists. An object creation was requested, but this object was already existing.\n"
+          },
           "500": {
             "description": "An internal error has occured. See error details.\n",
             "schema": {
@@ -2669,6 +2965,9 @@ func init() {
           "405": {
             "description": "MethodNotAllowed\n"
           },
+          "409": {
+            "description": "Resource already exists. An object creation was requested, but this object was already existing.\n"
+          },
           "500": {
             "description": "An internal error has occured. See error details.\n",
             "schema": {
@@ -2969,6 +3268,9 @@ func init() {
           },
           "405": {
             "description": "MethodNotAllowed\n"
+          },
+          "409": {
+            "description": "Resource already exists. An object creation was requested, but this object was already existing.\n"
           },
           "500": {
             "description": "An internal error has occured. See error details.\n",
@@ -3609,6 +3911,32 @@ func init() {
       "additionalProperties": true,
       "example": {}
     },
+    "conversion": {
+      "description": "Unit conversions.\n",
+      "allOf": [
+        {
+          "type": "object",
+          "required": [
+            "fromUnit",
+            "toUnit"
+          ],
+          "properties": {
+            "auditTrail": {
+              "$ref": "#/definitions/audit"
+            },
+            "fromUnit": {
+              "$ref": "#/definitions/munit"
+            },
+            "toUnit": {
+              "$ref": "#/definitions/munit"
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/conversionSpec"
+        }
+      ]
+    },
     "conversionSpec": {
       "description": "Unit conversion specification.\n",
       "type": "object",
@@ -4205,6 +4533,14 @@ func init() {
       "externalDocs": {
         "description": "API concepts: semver.\n",
         "url": "https://github.io/wiki/TODO#semver"
+      }
+    },
+    {
+      "description": "Unit conversion logic.\n",
+      "name": "conversions",
+      "externalDocs": {
+        "description": "API concepts: unit conversions.\n",
+        "url": "https://github.io/wiki/TODO#unitconversions"
       }
     }
   ]

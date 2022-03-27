@@ -60,6 +60,12 @@ func (o *PostSeriesSeriesIDReader) ReadResponse(response runtime.ClientResponse,
 			return nil, err
 		}
 		return nil, result
+	case 409:
+		result := NewPostSeriesSeriesIDConflict()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 500:
 		result := NewPostSeriesSeriesIDInternalServerError()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -448,6 +454,57 @@ func (o *PostSeriesSeriesIDMethodNotAllowed) String() string {
 }
 
 func (o *PostSeriesSeriesIDMethodNotAllowed) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	return nil
+}
+
+// NewPostSeriesSeriesIDConflict creates a PostSeriesSeriesIDConflict with default headers values
+func NewPostSeriesSeriesIDConflict() *PostSeriesSeriesIDConflict {
+	return &PostSeriesSeriesIDConflict{}
+}
+
+/* PostSeriesSeriesIDConflict describes a response with status code 409, with default header values.
+
+Resource already exists. An object creation was requested, but this object was already existing.
+
+*/
+type PostSeriesSeriesIDConflict struct {
+}
+
+// IsSuccess returns true when this post series series Id conflict response has a 2xx status code
+func (o *PostSeriesSeriesIDConflict) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this post series series Id conflict response has a 3xx status code
+func (o *PostSeriesSeriesIDConflict) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this post series series Id conflict response has a 4xx status code
+func (o *PostSeriesSeriesIDConflict) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this post series series Id conflict response has a 5xx status code
+func (o *PostSeriesSeriesIDConflict) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this post series series Id conflict response a status code equal to that given
+func (o *PostSeriesSeriesIDConflict) IsCode(code int) bool {
+	return code == 409
+}
+
+func (o *PostSeriesSeriesIDConflict) Error() string {
+	return fmt.Sprintf("[POST /series/{seriesId}][%d] postSeriesSeriesIdConflict ", 409)
+}
+
+func (o *PostSeriesSeriesIDConflict) String() string {
+	return fmt.Sprintf("[POST /series/{seriesId}][%d] postSeriesSeriesIdConflict ", 409)
+}
+
+func (o *PostSeriesSeriesIDConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	return nil
 }

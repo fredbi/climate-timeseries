@@ -251,6 +251,34 @@ func (o *PostSeriesVersionsVersionedSeriesIDMethodNotAllowed) WriteResponse(rw h
 func (o *PostSeriesVersionsVersionedSeriesIDMethodNotAllowed) PostSeriesVersionsVersionedSeriesIDResponder() {
 }
 
+// PostSeriesVersionsVersionedSeriesIDConflictCode is the HTTP code returned for type PostSeriesVersionsVersionedSeriesIDConflict
+const PostSeriesVersionsVersionedSeriesIDConflictCode int = 409
+
+/*PostSeriesVersionsVersionedSeriesIDConflict Resource already exists. An object creation was requested, but this object was already existing.
+
+
+swagger:response postSeriesVersionsVersionedSeriesIdConflict
+*/
+type PostSeriesVersionsVersionedSeriesIDConflict struct {
+}
+
+// NewPostSeriesVersionsVersionedSeriesIDConflict creates PostSeriesVersionsVersionedSeriesIDConflict with default headers values
+func NewPostSeriesVersionsVersionedSeriesIDConflict() *PostSeriesVersionsVersionedSeriesIDConflict {
+
+	return &PostSeriesVersionsVersionedSeriesIDConflict{}
+}
+
+// WriteResponse to the client
+func (o *PostSeriesVersionsVersionedSeriesIDConflict) WriteResponse(rw http.ResponseWriter, producer runtime.Producer) {
+
+	rw.Header().Del(runtime.HeaderContentType) //Remove Content-Type on empty responses
+
+	rw.WriteHeader(409)
+}
+
+func (o *PostSeriesVersionsVersionedSeriesIDConflict) PostSeriesVersionsVersionedSeriesIDResponder() {
+}
+
 // PostSeriesVersionsVersionedSeriesIDInternalServerErrorCode is the HTTP code returned for type PostSeriesVersionsVersionedSeriesIDInternalServerError
 const PostSeriesVersionsVersionedSeriesIDInternalServerErrorCode int = 500
 

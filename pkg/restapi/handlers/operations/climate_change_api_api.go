@@ -21,6 +21,7 @@ import (
 	"github.com/go-openapi/swag"
 
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/classes"
+	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/conversions"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/series"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/tags"
 )
@@ -70,6 +71,12 @@ func NewClimateChangeAPIAPI(spec *loads.Document) *ClimateChangeAPIAPI {
 		}),
 		ClassesGetClassesClassIDMembersHandler: classes.GetClassesClassIDMembersHandlerFunc(func(params classes.GetClassesClassIDMembersParams) classes.GetClassesClassIDMembersResponder {
 			return classes.GetClassesClassIDMembersNotImplemented()
+		}),
+		ConversionsGetConversionHandler: conversions.GetConversionHandlerFunc(func(params conversions.GetConversionParams) conversions.GetConversionResponder {
+			return conversions.GetConversionNotImplemented()
+		}),
+		ConversionsGetConversionFromUnitToUnitHandler: conversions.GetConversionFromUnitToUnitHandlerFunc(func(params conversions.GetConversionFromUnitToUnitParams) conversions.GetConversionFromUnitToUnitResponder {
+			return conversions.GetConversionFromUnitToUnitNotImplemented()
 		}),
 		TagsGetSearchTagsHandler: tags.GetSearchTagsHandlerFunc(func(params tags.GetSearchTagsParams) tags.GetSearchTagsResponder {
 			return tags.GetSearchTagsNotImplemented()
@@ -182,6 +189,10 @@ type ClimateChangeAPIAPI struct {
 	ClassesGetClassesClassIDHandler classes.GetClassesClassIDHandler
 	// ClassesGetClassesClassIDMembersHandler sets the operation handler for the get classes class ID members operation
 	ClassesGetClassesClassIDMembersHandler classes.GetClassesClassIDMembersHandler
+	// ConversionsGetConversionHandler sets the operation handler for the get conversion operation
+	ConversionsGetConversionHandler conversions.GetConversionHandler
+	// ConversionsGetConversionFromUnitToUnitHandler sets the operation handler for the get conversion from unit to unit operation
+	ConversionsGetConversionFromUnitToUnitHandler conversions.GetConversionFromUnitToUnitHandler
 	// TagsGetSearchTagsHandler sets the operation handler for the get search tags operation
 	TagsGetSearchTagsHandler tags.GetSearchTagsHandler
 	// TagsGetSearchTagsTagHandler sets the operation handler for the get search tags tag operation
@@ -318,6 +329,12 @@ func (o *ClimateChangeAPIAPI) Validate() error {
 	}
 	if o.ClassesGetClassesClassIDMembersHandler == nil {
 		unregistered = append(unregistered, "classes.GetClassesClassIDMembersHandler")
+	}
+	if o.ConversionsGetConversionHandler == nil {
+		unregistered = append(unregistered, "conversions.GetConversionHandler")
+	}
+	if o.ConversionsGetConversionFromUnitToUnitHandler == nil {
+		unregistered = append(unregistered, "conversions.GetConversionFromUnitToUnitHandler")
 	}
 	if o.TagsGetSearchTagsHandler == nil {
 		unregistered = append(unregistered, "tags.GetSearchTagsHandler")
@@ -489,6 +506,14 @@ func (o *ClimateChangeAPIAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/classes/{classId}/members"] = classes.NewGetClassesClassIDMembers(o.context, o.ClassesGetClassesClassIDMembersHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/conversion"] = conversions.NewGetConversion(o.context, o.ConversionsGetConversionHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/conversion/{fromUnit}/{toUnit}"] = conversions.NewGetConversionFromUnitToUnit(o.context, o.ConversionsGetConversionFromUnitToUnitHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}

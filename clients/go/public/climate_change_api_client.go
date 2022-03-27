@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/fredbi/climate-timeseries/clients/go/public/classes"
+	"github.com/fredbi/climate-timeseries/clients/go/public/conversions"
 	"github.com/fredbi/climate-timeseries/clients/go/public/series"
 	"github.com/fredbi/climate-timeseries/clients/go/public/tags"
 )
@@ -58,6 +59,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *ClimateCha
 	cli := new(ClimateChangeAPI)
 	cli.Transport = transport
 	cli.Classes = classes.New(transport, formats)
+	cli.Conversions = conversions.New(transport, formats)
 	cli.Series = series.New(transport, formats)
 	cli.Tags = tags.New(transport, formats)
 	return cli
@@ -106,6 +108,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type ClimateChangeAPI struct {
 	Classes classes.ClientService
 
+	Conversions conversions.ClientService
+
 	Series series.ClientService
 
 	Tags tags.ClientService
@@ -117,6 +121,7 @@ type ClimateChangeAPI struct {
 func (c *ClimateChangeAPI) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 	c.Classes.SetTransport(transport)
+	c.Conversions.SetTransport(transport)
 	c.Series.SetTransport(transport)
 	c.Tags.SetTransport(transport)
 }
