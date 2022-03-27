@@ -142,6 +142,14 @@ INSERT INTO data_sources(short_code, title) VALUES
   ('SHIFTERS', '{"fr": "Shifters (bénévoles)", "en": "Shifters (volunteers)"}'),
   ('RTE', '{"fr": "RTE (Réseau de Transport d''Electricité, France)", "en": "RTE (France''s energy transmission system operator)"}'),
   ('EDF', '{"fr": "EDF (Electricité de France)", "en": "EDF (France''s electricity generation utility)"}')
+  ('EGEDA', '{"fr": "Expert Group on Energy Data and Analysis (EGEDA)", "en": "Expert Group on Energy Data and Analysis (EGEDA)"}'),
+  ('WORLDBANK', '{"fr": "Banque Mondiale", "en": "World Bank"}'),
+  ('IMF', '{"fr": "Fond Monétaire International (FMI)", "en": "International Monetary Fund (IMF)"}'),
+  ('IEA', '{"fr": "Agence Internationale de l''Energie (IEA)", en": "International Energy Agency (IEA)"}'),
+  ('USEIA', '{"fr": "US Energy Information Administration (EIA)", en": "US Energy Information Administration (EIA)"}'),
+  ('CAIT', '{"fr": "CAIT Climate Data Explorer (World Resources Institute)", en": "CAIT Climate Data Explorer (World Resources Institute)"}'),
+  ('EDGAR', '{"fr": "EDGAR: Emissions Database for Global Atmospheric Research", "en": "EDGAR: Emissions Database for Global Atmospheric Research"}'),
+  ('EORA', '{"fr": "Global Supply Chain Database (EORA)", "en": "Global Supply Chain Database (EORA)"}')
 ;
 
 UPDATE data_sources SET audit_trail = json_build_object(
