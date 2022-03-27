@@ -20,6 +20,7 @@ import (
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
+	"github.com/fredbi/climate-timeseries/pkg/auth"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/classes"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/conversions"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/series"
@@ -54,6 +55,12 @@ func NewClimateChangeAPIAPI(spec *loads.Document) *ClimateChangeAPIAPI {
 		}),
 		JSONProducer: runtime.JSONProducer(),
 
+		ClassesDeleteClassesClassIDMembersClassMemberIDHandler: classes.DeleteClassesClassIDMembersClassMemberIDHandlerFunc(func(params classes.DeleteClassesClassIDMembersClassMemberIDParams, principal auth.Principal) classes.DeleteClassesClassIDMembersClassMemberIDResponder {
+			return classes.DeleteClassesClassIDMembersClassMemberIDNotImplemented()
+		}),
+		ConversionsDeleteConversionsFromUnitToUnitHandler: conversions.DeleteConversionsFromUnitToUnitHandlerFunc(func(params conversions.DeleteConversionsFromUnitToUnitParams, principal auth.Principal) conversions.DeleteConversionsFromUnitToUnitResponder {
+			return conversions.DeleteConversionsFromUnitToUnitNotImplemented()
+		}),
 		SeriesDeleteSeriesSeriesIDHandler: series.DeleteSeriesSeriesIDHandlerFunc(func(params series.DeleteSeriesSeriesIDParams) series.DeleteSeriesSeriesIDResponder {
 			return series.DeleteSeriesSeriesIDNotImplemented()
 		}),
@@ -77,6 +84,9 @@ func NewClimateChangeAPIAPI(spec *loads.Document) *ClimateChangeAPIAPI {
 		}),
 		ConversionsGetConversionFromUnitToUnitHandler: conversions.GetConversionFromUnitToUnitHandlerFunc(func(params conversions.GetConversionFromUnitToUnitParams) conversions.GetConversionFromUnitToUnitResponder {
 			return conversions.GetConversionFromUnitToUnitNotImplemented()
+		}),
+		ConversionsGetConversionsHandler: conversions.GetConversionsHandlerFunc(func(params conversions.GetConversionsParams) conversions.GetConversionsResponder {
+			return conversions.GetConversionsNotImplemented()
 		}),
 		TagsGetSearchTagsHandler: tags.GetSearchTagsHandlerFunc(func(params tags.GetSearchTagsParams) tags.GetSearchTagsResponder {
 			return tags.GetSearchTagsNotImplemented()
@@ -111,6 +121,12 @@ func NewClimateChangeAPIAPI(spec *loads.Document) *ClimateChangeAPIAPI {
 		SeriesGetSeriesVersionsVersionedSeriesIDValuesHandler: series.GetSeriesVersionsVersionedSeriesIDValuesHandlerFunc(func(params series.GetSeriesVersionsVersionedSeriesIDValuesParams) series.GetSeriesVersionsVersionedSeriesIDValuesResponder {
 			return series.GetSeriesVersionsVersionedSeriesIDValuesNotImplemented()
 		}),
+		ClassesPostClassesClassIDMembersHandler: classes.PostClassesClassIDMembersHandlerFunc(func(params classes.PostClassesClassIDMembersParams, principal auth.Principal) classes.PostClassesClassIDMembersResponder {
+			return classes.PostClassesClassIDMembersNotImplemented()
+		}),
+		ConversionsPostConversionsFromUnitToUnitHandler: conversions.PostConversionsFromUnitToUnitHandlerFunc(func(params conversions.PostConversionsFromUnitToUnitParams, principal auth.Principal) conversions.PostConversionsFromUnitToUnitResponder {
+			return conversions.PostConversionsFromUnitToUnitNotImplemented()
+		}),
 		SeriesPostSeriesHandler: series.PostSeriesHandlerFunc(func(params series.PostSeriesParams) series.PostSeriesResponder {
 			return series.PostSeriesNotImplemented()
 		}),
@@ -123,6 +139,15 @@ func NewClimateChangeAPIAPI(spec *loads.Document) *ClimateChangeAPIAPI {
 		SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler: series.PostSeriesVersionsVersionedSeriesIDValuesHandlerFunc(func(params series.PostSeriesVersionsVersionedSeriesIDValuesParams) series.PostSeriesVersionsVersionedSeriesIDValuesResponder {
 			return series.PostSeriesVersionsVersionedSeriesIDValuesNotImplemented()
 		}),
+		ClassesPutClassesClassIDHandler: classes.PutClassesClassIDHandlerFunc(func(params classes.PutClassesClassIDParams, principal auth.Principal) classes.PutClassesClassIDResponder {
+			return classes.PutClassesClassIDNotImplemented()
+		}),
+		ClassesPutClassesClassIDMembersClassMemberIDHandler: classes.PutClassesClassIDMembersClassMemberIDHandlerFunc(func(params classes.PutClassesClassIDMembersClassMemberIDParams, principal auth.Principal) classes.PutClassesClassIDMembersClassMemberIDResponder {
+			return classes.PutClassesClassIDMembersClassMemberIDNotImplemented()
+		}),
+		ConversionsPutConversionsFromUnitToUnitHandler: conversions.PutConversionsFromUnitToUnitHandlerFunc(func(params conversions.PutConversionsFromUnitToUnitParams, principal auth.Principal) conversions.PutConversionsFromUnitToUnitResponder {
+			return conversions.PutConversionsFromUnitToUnitNotImplemented()
+		}),
 		SeriesPutSeriesSeriesIDHandler: series.PutSeriesSeriesIDHandlerFunc(func(params series.PutSeriesSeriesIDParams) series.PutSeriesSeriesIDResponder {
 			return series.PutSeriesSeriesIDNotImplemented()
 		}),
@@ -132,12 +157,27 @@ func NewClimateChangeAPIAPI(spec *loads.Document) *ClimateChangeAPIAPI {
 		SeriesPutSeriesVersionsVersionedSeriesIDValuesHandler: series.PutSeriesVersionsVersionedSeriesIDValuesHandlerFunc(func(params series.PutSeriesVersionsVersionedSeriesIDValuesParams) series.PutSeriesVersionsVersionedSeriesIDValuesResponder {
 			return series.PutSeriesVersionsVersionedSeriesIDValuesNotImplemented()
 		}),
+
+		// Applies when the "X-API-Key" header is set
+		APIKeyAuth: func(token string) (auth.Principal, error) {
+			return nil, errors.NotImplemented("api key auth (apiKey) X-API-Key from header param [X-API-Key] has not yet been implemented")
+		},
+		BearerTokenAuth: func(token string, scopes []string) (auth.Principal, error) {
+			return nil, errors.NotImplemented("oauth2 bearer auth (bearerToken) has not yet been implemented")
+		},
+		// default authorizer is authorized meaning no requests are blocked
+		APIAuthorizer: security.Authorized(),
 	}
 }
 
-/*ClimateChangeAPIAPI The timeseries API allows contributors to upload time series about their climate change models and studies.
+/*ClimateChangeAPIAPI The API allows the public to search and consult time series about climate change research
+conducted by TheShiftProject.
 
-The API allows the public to search and consult time series about climate change research.
+The climate time series API allows contributors to upload time series about their climate
+change models and studies.
+
+Other secured endpoints allows admins to maintain the nomenclatures used by the climate
+time series, such as units etc. Timeseries publication status and ownership is for now managed by admins.
 */
 type ClimateChangeAPIAPI struct {
 	spec            *loads.Document
@@ -177,6 +217,21 @@ type ClimateChangeAPIAPI struct {
 	//   - application/json
 	JSONProducer runtime.Producer
 
+	// APIKeyAuth registers a function that takes a token and returns a principal
+	// it performs authentication based on an api key X-API-Key provided in the header
+	APIKeyAuth func(string) (auth.Principal, error)
+
+	// BearerTokenAuth registers a function that takes an access token and a collection of required scopes and returns a principal
+	// it performs authentication based on an oauth2 bearer token provided in the request
+	BearerTokenAuth func(string, []string) (auth.Principal, error)
+
+	// APIAuthorizer provides access control (ACL/RBAC/ABAC) by providing access to the request and authenticated principal
+	APIAuthorizer runtime.Authorizer
+
+	// ClassesDeleteClassesClassIDMembersClassMemberIDHandler sets the operation handler for the delete classes class ID members class member ID operation
+	ClassesDeleteClassesClassIDMembersClassMemberIDHandler classes.DeleteClassesClassIDMembersClassMemberIDHandler
+	// ConversionsDeleteConversionsFromUnitToUnitHandler sets the operation handler for the delete conversions from unit to unit operation
+	ConversionsDeleteConversionsFromUnitToUnitHandler conversions.DeleteConversionsFromUnitToUnitHandler
 	// SeriesDeleteSeriesSeriesIDHandler sets the operation handler for the delete series series ID operation
 	SeriesDeleteSeriesSeriesIDHandler series.DeleteSeriesSeriesIDHandler
 	// SeriesDeleteSeriesVersionsVersionedSeriesIDHandler sets the operation handler for the delete series versions versioned series ID operation
@@ -193,6 +248,8 @@ type ClimateChangeAPIAPI struct {
 	ConversionsGetConversionHandler conversions.GetConversionHandler
 	// ConversionsGetConversionFromUnitToUnitHandler sets the operation handler for the get conversion from unit to unit operation
 	ConversionsGetConversionFromUnitToUnitHandler conversions.GetConversionFromUnitToUnitHandler
+	// ConversionsGetConversionsHandler sets the operation handler for the get conversions operation
+	ConversionsGetConversionsHandler conversions.GetConversionsHandler
 	// TagsGetSearchTagsHandler sets the operation handler for the get search tags operation
 	TagsGetSearchTagsHandler tags.GetSearchTagsHandler
 	// TagsGetSearchTagsTagHandler sets the operation handler for the get search tags tag operation
@@ -215,6 +272,10 @@ type ClimateChangeAPIAPI struct {
 	SeriesGetSeriesVersionsVersionedSeriesIDHandler series.GetSeriesVersionsVersionedSeriesIDHandler
 	// SeriesGetSeriesVersionsVersionedSeriesIDValuesHandler sets the operation handler for the get series versions versioned series ID values operation
 	SeriesGetSeriesVersionsVersionedSeriesIDValuesHandler series.GetSeriesVersionsVersionedSeriesIDValuesHandler
+	// ClassesPostClassesClassIDMembersHandler sets the operation handler for the post classes class ID members operation
+	ClassesPostClassesClassIDMembersHandler classes.PostClassesClassIDMembersHandler
+	// ConversionsPostConversionsFromUnitToUnitHandler sets the operation handler for the post conversions from unit to unit operation
+	ConversionsPostConversionsFromUnitToUnitHandler conversions.PostConversionsFromUnitToUnitHandler
 	// SeriesPostSeriesHandler sets the operation handler for the post series operation
 	SeriesPostSeriesHandler series.PostSeriesHandler
 	// SeriesPostSeriesSeriesIDHandler sets the operation handler for the post series series ID operation
@@ -223,6 +284,12 @@ type ClimateChangeAPIAPI struct {
 	SeriesPostSeriesVersionsVersionedSeriesIDHandler series.PostSeriesVersionsVersionedSeriesIDHandler
 	// SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler sets the operation handler for the post series versions versioned series ID values operation
 	SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler series.PostSeriesVersionsVersionedSeriesIDValuesHandler
+	// ClassesPutClassesClassIDHandler sets the operation handler for the put classes class ID operation
+	ClassesPutClassesClassIDHandler classes.PutClassesClassIDHandler
+	// ClassesPutClassesClassIDMembersClassMemberIDHandler sets the operation handler for the put classes class ID members class member ID operation
+	ClassesPutClassesClassIDMembersClassMemberIDHandler classes.PutClassesClassIDMembersClassMemberIDHandler
+	// ConversionsPutConversionsFromUnitToUnitHandler sets the operation handler for the put conversions from unit to unit operation
+	ConversionsPutConversionsFromUnitToUnitHandler conversions.PutConversionsFromUnitToUnitHandler
 	// SeriesPutSeriesSeriesIDHandler sets the operation handler for the put series series ID operation
 	SeriesPutSeriesSeriesIDHandler series.PutSeriesSeriesIDHandler
 	// SeriesPutSeriesVersionsVersionedSeriesIDHandler sets the operation handler for the put series versions versioned series ID operation
@@ -312,6 +379,19 @@ func (o *ClimateChangeAPIAPI) Validate() error {
 		unregistered = append(unregistered, "JSONProducer")
 	}
 
+	if o.APIKeyAuth == nil {
+		unregistered = append(unregistered, "XAPIKeyAuth")
+	}
+	if o.BearerTokenAuth == nil {
+		unregistered = append(unregistered, "BearerTokenAuth")
+	}
+
+	if o.ClassesDeleteClassesClassIDMembersClassMemberIDHandler == nil {
+		unregistered = append(unregistered, "classes.DeleteClassesClassIDMembersClassMemberIDHandler")
+	}
+	if o.ConversionsDeleteConversionsFromUnitToUnitHandler == nil {
+		unregistered = append(unregistered, "conversions.DeleteConversionsFromUnitToUnitHandler")
+	}
 	if o.SeriesDeleteSeriesSeriesIDHandler == nil {
 		unregistered = append(unregistered, "series.DeleteSeriesSeriesIDHandler")
 	}
@@ -335,6 +415,9 @@ func (o *ClimateChangeAPIAPI) Validate() error {
 	}
 	if o.ConversionsGetConversionFromUnitToUnitHandler == nil {
 		unregistered = append(unregistered, "conversions.GetConversionFromUnitToUnitHandler")
+	}
+	if o.ConversionsGetConversionsHandler == nil {
+		unregistered = append(unregistered, "conversions.GetConversionsHandler")
 	}
 	if o.TagsGetSearchTagsHandler == nil {
 		unregistered = append(unregistered, "tags.GetSearchTagsHandler")
@@ -369,6 +452,12 @@ func (o *ClimateChangeAPIAPI) Validate() error {
 	if o.SeriesGetSeriesVersionsVersionedSeriesIDValuesHandler == nil {
 		unregistered = append(unregistered, "series.GetSeriesVersionsVersionedSeriesIDValuesHandler")
 	}
+	if o.ClassesPostClassesClassIDMembersHandler == nil {
+		unregistered = append(unregistered, "classes.PostClassesClassIDMembersHandler")
+	}
+	if o.ConversionsPostConversionsFromUnitToUnitHandler == nil {
+		unregistered = append(unregistered, "conversions.PostConversionsFromUnitToUnitHandler")
+	}
 	if o.SeriesPostSeriesHandler == nil {
 		unregistered = append(unregistered, "series.PostSeriesHandler")
 	}
@@ -380,6 +469,15 @@ func (o *ClimateChangeAPIAPI) Validate() error {
 	}
 	if o.SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler == nil {
 		unregistered = append(unregistered, "series.PostSeriesVersionsVersionedSeriesIDValuesHandler")
+	}
+	if o.ClassesPutClassesClassIDHandler == nil {
+		unregistered = append(unregistered, "classes.PutClassesClassIDHandler")
+	}
+	if o.ClassesPutClassesClassIDMembersClassMemberIDHandler == nil {
+		unregistered = append(unregistered, "classes.PutClassesClassIDMembersClassMemberIDHandler")
+	}
+	if o.ConversionsPutConversionsFromUnitToUnitHandler == nil {
+		unregistered = append(unregistered, "conversions.PutConversionsFromUnitToUnitHandler")
 	}
 	if o.SeriesPutSeriesSeriesIDHandler == nil {
 		unregistered = append(unregistered, "series.PutSeriesSeriesIDHandler")
@@ -405,12 +503,28 @@ func (o *ClimateChangeAPIAPI) ServeErrorFor(operationID string) func(http.Respon
 
 // AuthenticatorsFor gets the authenticators for the specified security schemes
 func (o *ClimateChangeAPIAPI) AuthenticatorsFor(schemes map[string]spec.SecurityScheme) map[string]runtime.Authenticator {
-	return nil
+	result := make(map[string]runtime.Authenticator)
+	for name := range schemes {
+		switch name {
+		case "apiKey":
+			scheme := schemes[name]
+			result[name] = o.APIKeyAuthenticator(scheme.Name, scheme.In, func(token string) (interface{}, error) {
+				return o.APIKeyAuth(token)
+			})
+
+		case "bearerToken":
+			result[name] = o.BearerAuthenticator(name, func(token string, scopes []string) (interface{}, error) {
+				return o.BearerTokenAuth(token, scopes)
+			})
+
+		}
+	}
+	return result
 }
 
 // Authorizer returns the registered authorizer
 func (o *ClimateChangeAPIAPI) Authorizer() runtime.Authorizer {
-	return nil
+	return o.APIAuthorizer
 }
 
 // ConsumersFor gets the consumers for the specified media types.
@@ -485,6 +599,14 @@ func (o *ClimateChangeAPIAPI) initHandlerCache() {
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
 	}
+	o.handlers["DELETE"]["/classes/{classId}/members/{classMemberId}"] = classes.NewDeleteClassesClassIDMembersClassMemberID(o.context, o.ClassesDeleteClassesClassIDMembersClassMemberIDHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
+	o.handlers["DELETE"]["/conversions/{fromUnit}/{toUnit}"] = conversions.NewDeleteConversionsFromUnitToUnit(o.context, o.ConversionsDeleteConversionsFromUnitToUnitHandler)
+	if o.handlers["DELETE"] == nil {
+		o.handlers["DELETE"] = make(map[string]http.Handler)
+	}
 	o.handlers["DELETE"]["/series/{seriesId}"] = series.NewDeleteSeriesSeriesID(o.context, o.SeriesDeleteSeriesSeriesIDHandler)
 	if o.handlers["DELETE"] == nil {
 		o.handlers["DELETE"] = make(map[string]http.Handler)
@@ -514,6 +636,10 @@ func (o *ClimateChangeAPIAPI) initHandlerCache() {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
 	o.handlers["GET"]["/conversion/{fromUnit}/{toUnit}"] = conversions.NewGetConversionFromUnitToUnit(o.context, o.ConversionsGetConversionFromUnitToUnitHandler)
+	if o.handlers["GET"] == nil {
+		o.handlers["GET"] = make(map[string]http.Handler)
+	}
+	o.handlers["GET"]["/conversions"] = conversions.NewGetConversions(o.context, o.ConversionsGetConversionsHandler)
 	if o.handlers["GET"] == nil {
 		o.handlers["GET"] = make(map[string]http.Handler)
 	}
@@ -561,6 +687,14 @@ func (o *ClimateChangeAPIAPI) initHandlerCache() {
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
+	o.handlers["POST"]["/classes/{classId}/members"] = classes.NewPostClassesClassIDMembers(o.context, o.ClassesPostClassesClassIDMembersHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
+	o.handlers["POST"]["/conversions/{fromUnit}/{toUnit}"] = conversions.NewPostConversionsFromUnitToUnit(o.context, o.ConversionsPostConversionsFromUnitToUnitHandler)
+	if o.handlers["POST"] == nil {
+		o.handlers["POST"] = make(map[string]http.Handler)
+	}
 	o.handlers["POST"]["/series"] = series.NewPostSeries(o.context, o.SeriesPostSeriesHandler)
 	if o.handlers["POST"] == nil {
 		o.handlers["POST"] = make(map[string]http.Handler)
@@ -574,6 +708,18 @@ func (o *ClimateChangeAPIAPI) initHandlerCache() {
 		o.handlers["POST"] = make(map[string]http.Handler)
 	}
 	o.handlers["POST"]["/series/versions/{versionedSeriesId}/values"] = series.NewPostSeriesVersionsVersionedSeriesIDValues(o.context, o.SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/classes/{classId}"] = classes.NewPutClassesClassID(o.context, o.ClassesPutClassesClassIDHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/classes/{classId}/members/{classMemberId}"] = classes.NewPutClassesClassIDMembersClassMemberID(o.context, o.ClassesPutClassesClassIDMembersClassMemberIDHandler)
+	if o.handlers["PUT"] == nil {
+		o.handlers["PUT"] = make(map[string]http.Handler)
+	}
+	o.handlers["PUT"]["/conversions/{fromUnit}/{toUnit}"] = conversions.NewPutConversionsFromUnitToUnit(o.context, o.ConversionsPutConversionsFromUnitToUnitHandler)
 	if o.handlers["PUT"] == nil {
 		o.handlers["PUT"] = make(map[string]http.Handler)
 	}

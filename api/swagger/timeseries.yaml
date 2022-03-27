@@ -5,9 +5,15 @@ host: 'api.example.com'
 info:
   title: Climate time series API
   description: |
-    The timeseries API allows contributors to upload time series about their climate change models and studies.
+    The API allows the public to search and consult time series about climate change research
+    conducted by TheShiftProject.
 
-    The API allows the public to search and consult time series about climate change research.
+    The climate time series API allows contributors to upload time series about their climate
+    change models and studies.
+
+    Other secured endpoints allows admins to maintain the nomenclatures used by the climate
+    time series, such as units etc. Timeseries publication status and ownership is for now managed by admins.
+
   version: 'v0.0.1'
   termsOfService: |
     TODO
@@ -29,13 +35,32 @@ basePath: /v1/
 
 securityDefinitions:
   bearerToken:
+    description: |
+      The oauth2 security scheme is used to authenticate contributors, based on some external
+      identity providers (e.g. Google, github, facebook...).
+
+      We need one such definition for a given identity provider, unless we setup a proxy OIDC with federated identity.
+
     type: oauth2
     flow: accessCode
     authorizationUrl: 'https://myidentityprovider.org/protocol/openid-connect/authorize'
     tokenUrl: 'https://myidentityprovider/protocol/openid-connect/token'
     scopes:
-      'openid': "Authorize the API to inquire about standard OpenID claims"
-      'email': "Authorize the API to inquire about the user's email"
+      'openid': "Authorize our API to inquire about standard OpenID claims"
+      'email': "Authorize our API to inquire about the user's email"
+
+  apiKey:
+    description: |
+      API keys are intended to allow for a programmatic use of the API, letting clients consume endpoints.
+
+      This is required for contributors who would like to interact with the API through, say, a R or python client,
+      or from they Jupyter python console.
+
+    type: apiKey
+    name: X-API-Key
+    in: header
+
+security: []
 
 tags:
   - name: classes
@@ -168,6 +193,40 @@ paths:
         default:
           $ref: 'responses.yaml#/responses/otherError'
 
+    put:
+      tags: [classes]
+      summary: Update descriptive metadata about a nomenclature class
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classDescriptionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Metadata about nomenclature classes successfully updated.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/classDescription'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
   /classes/{classId}/members:
     get:
       tags: [classes]
@@ -209,6 +268,275 @@ paths:
             type: array
             items:
               $ref: 'timeseries-models.yaml#/definitions/class'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    post:
+      tags: [classes]
+      summary: Add a new member in a nomenclature class
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classMemberInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '201':
+          description: |
+            Class members added.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly created resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the newly created resource.
+              type: integer
+              format: int64
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /classes/{classId}/members/{classMemberId}:
+    put:
+      tags: [classes]
+      summary: Update a member of a nomenclature class
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inpath/classMemberInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classMemberInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Class members updated.
+
+          headers:
+            Location:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    delete:
+      tags: [classes]
+      summary: Removes a member from a nomenclature class
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inpath/classMemberInPath'
+        - $ref: 'parameters.yaml#/params/inbody/classMemberInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Class members successfully deleted.
+
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /conversions:
+    get:
+      tags: [conversions]
+      summary: List available unit conversions, with some query filters
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inquery/fromUnitInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toUnitInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Available unit conversions
+
+          schema:
+            type: array
+            items:
+              $ref: 'timeseries-models.yaml#/definitions/conversion'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /conversions/{fromUnit}/{toUnit}:
+    post:
+      tags: [conversions]
+      summary: Creates add new conversion specification from unit to unit.
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/fromUnitInPath'
+        - $ref: 'parameters.yaml#/params/inpath/toUnitInPath'
+        - $ref: 'parameters.yaml#/params/inbody/conversionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '201':
+          description: |
+            Unit conversion added.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly create resource.
+              type: string
+              format: uri
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    put:
+      tags: [conversions]
+      summary: Update an existing conversion specification from unit to unit.
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/fromUnitInPath'
+        - $ref: 'parameters.yaml#/params/inpath/toUnitInPath'
+        - $ref: 'parameters.yaml#/params/inbody/conversionInBody'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Unit conversion updated.
+
+          headers:
+            Location:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    delete:
+      tags: [conversions]
+      summary: Delete an existing conversion specification from unit to unit.
+      security: 
+        - bearerToken: [openid,email]
+        - apiKey: []
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/fromUnitInPath'
+        - $ref: 'parameters.yaml#/params/inpath/toUnitInPath'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '204':
+          description: |
+            Unit conversion deleted.
         '400':
           $ref: 'responses.yaml#/responses/badRequest'
         '401':

@@ -339,18 +339,18 @@ params:
     
       in: query
       type: string
-      required: true
+      required: false
       minLength: 1
       maxLength: 100
     
     toUnitInQuery:
       name: toUnit
       description: |
-        Original unit to be converted.
+        Target unit result of the conversion.
     
       in: query
       type: string
-      required: true
+      required: false
       minLength: 1
       maxLength: 100
     

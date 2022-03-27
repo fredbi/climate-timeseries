@@ -10,13 +10,15 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 
+	"github.com/fredbi/climate-timeseries/pkg/auth"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/classes"
+	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/conversions"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/series"
 	"github.com/fredbi/climate-timeseries/pkg/restapi/handlers/operations/tags"
 )
 
-//go:generate swagger generate server --target ../../restapi --name ClimateChangeAPI --spec ../../../api/swagger/timeseries.yaml --server-package handlers --principal interface{} --default-scheme https --skip-models --exclude-main --strict-responders
+//go:generate swagger generate server --target ../../restapi --name ClimateChangeAPI --spec ../../../api/swagger/timeseries.yaml --server-package handlers --principal github.com/fredbi/climate-timeseries/pkg/auth.Principal --default-scheme https --skip-models --exclude-main --strict-responders
 
 func configureFlags(api *operations.ClimateChangeAPIAPI) {
 	// api.CommandLineOptionsGroups = []swag.CommandLineOptionsGroup{ ... }
@@ -46,6 +48,34 @@ func configureAPI(api *operations.ClimateChangeAPIAPI) http.Handler {
 	})
 	api.JSONProducer = runtime.JSONProducer()
 
+	// Applies when the "X-API-Key" header is set
+	if api.APIKeyAuth == nil {
+		api.APIKeyAuth = func(token string) (auth.Principal, error) {
+			return nil, errors.NotImplemented("api key auth (apiKey) X-API-Key from header param [X-API-Key] has not yet been implemented")
+		}
+	}
+	if api.BearerTokenAuth == nil {
+		api.BearerTokenAuth = func(token string, scopes []string) (auth.Principal, error) {
+			return nil, errors.NotImplemented("oauth2 bearer auth (bearerToken) has not yet been implemented")
+		}
+	}
+
+	// Set your custom authorizer if needed. Default one is security.Authorized()
+	// Expected interface runtime.Authorizer
+	//
+	// Example:
+	// api.APIAuthorizer = security.Authorized()
+
+	if api.ClassesDeleteClassesClassIDMembersClassMemberIDHandler == nil {
+		api.ClassesDeleteClassesClassIDMembersClassMemberIDHandler = classes.DeleteClassesClassIDMembersClassMemberIDHandlerFunc(func(params classes.DeleteClassesClassIDMembersClassMemberIDParams, principal auth.Principal) classes.DeleteClassesClassIDMembersClassMemberIDResponder {
+			return classes.DeleteClassesClassIDMembersClassMemberIDNotImplemented()
+		})
+	}
+	if api.ConversionsDeleteConversionsFromUnitToUnitHandler == nil {
+		api.ConversionsDeleteConversionsFromUnitToUnitHandler = conversions.DeleteConversionsFromUnitToUnitHandlerFunc(func(params conversions.DeleteConversionsFromUnitToUnitParams, principal auth.Principal) conversions.DeleteConversionsFromUnitToUnitResponder {
+			return conversions.DeleteConversionsFromUnitToUnitNotImplemented()
+		})
+	}
 	if api.SeriesDeleteSeriesSeriesIDHandler == nil {
 		api.SeriesDeleteSeriesSeriesIDHandler = series.DeleteSeriesSeriesIDHandlerFunc(func(params series.DeleteSeriesSeriesIDParams) series.DeleteSeriesSeriesIDResponder {
 			return series.DeleteSeriesSeriesIDNotImplemented()
@@ -74,6 +104,21 @@ func configureAPI(api *operations.ClimateChangeAPIAPI) http.Handler {
 	if api.ClassesGetClassesClassIDMembersHandler == nil {
 		api.ClassesGetClassesClassIDMembersHandler = classes.GetClassesClassIDMembersHandlerFunc(func(params classes.GetClassesClassIDMembersParams) classes.GetClassesClassIDMembersResponder {
 			return classes.GetClassesClassIDMembersNotImplemented()
+		})
+	}
+	if api.ConversionsGetConversionHandler == nil {
+		api.ConversionsGetConversionHandler = conversions.GetConversionHandlerFunc(func(params conversions.GetConversionParams) conversions.GetConversionResponder {
+			return conversions.GetConversionNotImplemented()
+		})
+	}
+	if api.ConversionsGetConversionFromUnitToUnitHandler == nil {
+		api.ConversionsGetConversionFromUnitToUnitHandler = conversions.GetConversionFromUnitToUnitHandlerFunc(func(params conversions.GetConversionFromUnitToUnitParams) conversions.GetConversionFromUnitToUnitResponder {
+			return conversions.GetConversionFromUnitToUnitNotImplemented()
+		})
+	}
+	if api.ConversionsGetConversionsHandler == nil {
+		api.ConversionsGetConversionsHandler = conversions.GetConversionsHandlerFunc(func(params conversions.GetConversionsParams) conversions.GetConversionsResponder {
+			return conversions.GetConversionsNotImplemented()
 		})
 	}
 	if api.TagsGetSearchTagsHandler == nil {
@@ -131,6 +176,16 @@ func configureAPI(api *operations.ClimateChangeAPIAPI) http.Handler {
 			return series.GetSeriesVersionsVersionedSeriesIDValuesNotImplemented()
 		})
 	}
+	if api.ClassesPostClassesClassIDMembersHandler == nil {
+		api.ClassesPostClassesClassIDMembersHandler = classes.PostClassesClassIDMembersHandlerFunc(func(params classes.PostClassesClassIDMembersParams, principal auth.Principal) classes.PostClassesClassIDMembersResponder {
+			return classes.PostClassesClassIDMembersNotImplemented()
+		})
+	}
+	if api.ConversionsPostConversionsFromUnitToUnitHandler == nil {
+		api.ConversionsPostConversionsFromUnitToUnitHandler = conversions.PostConversionsFromUnitToUnitHandlerFunc(func(params conversions.PostConversionsFromUnitToUnitParams, principal auth.Principal) conversions.PostConversionsFromUnitToUnitResponder {
+			return conversions.PostConversionsFromUnitToUnitNotImplemented()
+		})
+	}
 	if api.SeriesPostSeriesHandler == nil {
 		api.SeriesPostSeriesHandler = series.PostSeriesHandlerFunc(func(params series.PostSeriesParams) series.PostSeriesResponder {
 			return series.PostSeriesNotImplemented()
@@ -149,6 +204,21 @@ func configureAPI(api *operations.ClimateChangeAPIAPI) http.Handler {
 	if api.SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler == nil {
 		api.SeriesPostSeriesVersionsVersionedSeriesIDValuesHandler = series.PostSeriesVersionsVersionedSeriesIDValuesHandlerFunc(func(params series.PostSeriesVersionsVersionedSeriesIDValuesParams) series.PostSeriesVersionsVersionedSeriesIDValuesResponder {
 			return series.PostSeriesVersionsVersionedSeriesIDValuesNotImplemented()
+		})
+	}
+	if api.ClassesPutClassesClassIDHandler == nil {
+		api.ClassesPutClassesClassIDHandler = classes.PutClassesClassIDHandlerFunc(func(params classes.PutClassesClassIDParams, principal auth.Principal) classes.PutClassesClassIDResponder {
+			return classes.PutClassesClassIDNotImplemented()
+		})
+	}
+	if api.ClassesPutClassesClassIDMembersClassMemberIDHandler == nil {
+		api.ClassesPutClassesClassIDMembersClassMemberIDHandler = classes.PutClassesClassIDMembersClassMemberIDHandlerFunc(func(params classes.PutClassesClassIDMembersClassMemberIDParams, principal auth.Principal) classes.PutClassesClassIDMembersClassMemberIDResponder {
+			return classes.PutClassesClassIDMembersClassMemberIDNotImplemented()
+		})
+	}
+	if api.ConversionsPutConversionsFromUnitToUnitHandler == nil {
+		api.ConversionsPutConversionsFromUnitToUnitHandler = conversions.PutConversionsFromUnitToUnitHandlerFunc(func(params conversions.PutConversionsFromUnitToUnitParams, principal auth.Principal) conversions.PutConversionsFromUnitToUnitResponder {
+			return conversions.PutConversionsFromUnitToUnitNotImplemented()
 		})
 	}
 	if api.SeriesPutSeriesSeriesIDHandler == nil {

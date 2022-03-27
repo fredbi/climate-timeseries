@@ -50,20 +50,18 @@ type GetConversionParams struct {
 	Deep *bool
 	/*Original unit to be converted.
 
-	  Required: true
 	  Max Length: 100
 	  Min Length: 1
 	  In: query
 	*/
-	FromUnit string
-	/*Original unit to be converted.
+	FromUnit *string
+	/*Target unit result of the conversion.
 
-	  Required: true
 	  Max Length: 100
 	  Min Length: 1
 	  In: query
 	*/
-	ToUnit string
+	ToUnit *string
 }
 
 // BindRequest both binds and validates a request, it assumes that complex things implement a Validatable(strfmt.Registry) error interface
@@ -178,21 +176,18 @@ func (o *GetConversionParams) bindDeep(rawData []string, hasKey bool, formats st
 
 // bindFromUnit binds and validates parameter FromUnit from query.
 func (o *GetConversionParams) bindFromUnit(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("fromUnit", "query", rawData)
-	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
-	// Required: true
+	// Required: false
 	// AllowEmptyValue: false
 
-	if err := validate.RequiredString("fromUnit", "query", raw); err != nil {
-		return err
+	if raw == "" { // empty values pass all other validations
+		return nil
 	}
-	o.FromUnit = raw
+	o.FromUnit = &raw
 
 	if err := o.validateFromUnit(formats); err != nil {
 		return err
@@ -204,11 +199,11 @@ func (o *GetConversionParams) bindFromUnit(rawData []string, hasKey bool, format
 // validateFromUnit carries on validations for parameter FromUnit
 func (o *GetConversionParams) validateFromUnit(formats strfmt.Registry) error {
 
-	if err := validate.MinLength("fromUnit", "query", o.FromUnit, 1); err != nil {
+	if err := validate.MinLength("fromUnit", "query", *o.FromUnit, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("fromUnit", "query", o.FromUnit, 100); err != nil {
+	if err := validate.MaxLength("fromUnit", "query", *o.FromUnit, 100); err != nil {
 		return err
 	}
 
@@ -217,21 +212,18 @@ func (o *GetConversionParams) validateFromUnit(formats strfmt.Registry) error {
 
 // bindToUnit binds and validates parameter ToUnit from query.
 func (o *GetConversionParams) bindToUnit(rawData []string, hasKey bool, formats strfmt.Registry) error {
-	if !hasKey {
-		return errors.Required("toUnit", "query", rawData)
-	}
 	var raw string
 	if len(rawData) > 0 {
 		raw = rawData[len(rawData)-1]
 	}
 
-	// Required: true
+	// Required: false
 	// AllowEmptyValue: false
 
-	if err := validate.RequiredString("toUnit", "query", raw); err != nil {
-		return err
+	if raw == "" { // empty values pass all other validations
+		return nil
 	}
-	o.ToUnit = raw
+	o.ToUnit = &raw
 
 	if err := o.validateToUnit(formats); err != nil {
 		return err
@@ -243,11 +235,11 @@ func (o *GetConversionParams) bindToUnit(rawData []string, hasKey bool, formats 
 // validateToUnit carries on validations for parameter ToUnit
 func (o *GetConversionParams) validateToUnit(formats strfmt.Registry) error {
 
-	if err := validate.MinLength("toUnit", "query", o.ToUnit, 1); err != nil {
+	if err := validate.MinLength("toUnit", "query", *o.ToUnit, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("toUnit", "query", o.ToUnit, 100); err != nil {
+	if err := validate.MaxLength("toUnit", "query", *o.ToUnit, 100); err != nil {
 		return err
 	}
 

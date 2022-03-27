@@ -9,15 +9,10 @@ import (
 	"errors"
 	"net/url"
 	golangswaggerpaths "path"
-
-	"github.com/go-openapi/swag"
 )
 
-// GetConversionURL generates an URL for the get conversion operation
-type GetConversionURL struct {
-	Audit    *bool
-	Brief    *bool
-	Deep     *bool
+// GetConversionsURL generates an URL for the get conversions operation
+type GetConversionsURL struct {
 	FromUnit *string
 	ToUnit   *string
 
@@ -29,7 +24,7 @@ type GetConversionURL struct {
 // WithBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetConversionURL) WithBasePath(bp string) *GetConversionURL {
+func (o *GetConversionsURL) WithBasePath(bp string) *GetConversionsURL {
 	o.SetBasePath(bp)
 	return o
 }
@@ -37,15 +32,15 @@ func (o *GetConversionURL) WithBasePath(bp string) *GetConversionURL {
 // SetBasePath sets the base path for this url builder, only required when it's different from the
 // base path specified in the swagger spec.
 // When the value of the base path is an empty string
-func (o *GetConversionURL) SetBasePath(bp string) {
+func (o *GetConversionsURL) SetBasePath(bp string) {
 	o._basePath = bp
 }
 
 // Build a url path and query string
-func (o *GetConversionURL) Build() (*url.URL, error) {
+func (o *GetConversionsURL) Build() (*url.URL, error) {
 	var _result url.URL
 
-	var _path = "/conversion"
+	var _path = "/conversions"
 
 	_basePath := o._basePath
 	if _basePath == "" {
@@ -54,30 +49,6 @@ func (o *GetConversionURL) Build() (*url.URL, error) {
 	_result.Path = golangswaggerpaths.Join(_basePath, _path)
 
 	qs := make(url.Values)
-
-	var auditQ string
-	if o.Audit != nil {
-		auditQ = swag.FormatBool(*o.Audit)
-	}
-	if auditQ != "" {
-		qs.Set("audit", auditQ)
-	}
-
-	var briefQ string
-	if o.Brief != nil {
-		briefQ = swag.FormatBool(*o.Brief)
-	}
-	if briefQ != "" {
-		qs.Set("brief", briefQ)
-	}
-
-	var deepQ string
-	if o.Deep != nil {
-		deepQ = swag.FormatBool(*o.Deep)
-	}
-	if deepQ != "" {
-		qs.Set("deep", deepQ)
-	}
 
 	var fromUnitQ string
 	if o.FromUnit != nil {
@@ -101,7 +72,7 @@ func (o *GetConversionURL) Build() (*url.URL, error) {
 }
 
 // Must is a helper function to panic when the url builder returns an error
-func (o *GetConversionURL) Must(u *url.URL, err error) *url.URL {
+func (o *GetConversionsURL) Must(u *url.URL, err error) *url.URL {
 	if err != nil {
 		panic(err)
 	}
@@ -112,17 +83,17 @@ func (o *GetConversionURL) Must(u *url.URL, err error) *url.URL {
 }
 
 // String returns the string representation of the path with query string
-func (o *GetConversionURL) String() string {
+func (o *GetConversionsURL) String() string {
 	return o.Must(o.Build()).String()
 }
 
 // BuildFull builds a full url with scheme, host, path and query string
-func (o *GetConversionURL) BuildFull(scheme, host string) (*url.URL, error) {
+func (o *GetConversionsURL) BuildFull(scheme, host string) (*url.URL, error) {
 	if scheme == "" {
-		return nil, errors.New("scheme is required for a full url on GetConversionURL")
+		return nil, errors.New("scheme is required for a full url on GetConversionsURL")
 	}
 	if host == "" {
-		return nil, errors.New("host is required for a full url on GetConversionURL")
+		return nil, errors.New("host is required for a full url on GetConversionsURL")
 	}
 
 	base, err := o.Build()
@@ -136,6 +107,6 @@ func (o *GetConversionURL) BuildFull(scheme, host string) (*url.URL, error) {
 }
 
 // StringFull returns the string representation of a complete url
-func (o *GetConversionURL) StringFull(scheme, host string) string {
+func (o *GetConversionsURL) StringFull(scheme, host string) string {
 	return o.Must(o.BuildFull(scheme, host)).String()
 }

@@ -29,7 +29,7 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "The timeseries API allows contributors to upload time series about their climate change models and studies.\n\nThe API allows the public to search and consult time series about climate change research.\n",
+    "description": "The API allows the public to search and consult time series about climate change research\nconducted by TheShiftProject.\n\nThe climate time series API allows contributors to upload time series about their climate\nchange models and studies.\n\nOther secured endpoints allows admins to maintain the nomenclatures used by the climate\ntime series, such as units etc. Timeseries publication status and ownership is for now managed by admins.\n",
     "title": "Climate time series API",
     "termsOfService": "TODO\n",
     "contact": {
@@ -149,6 +149,60 @@ func init() {
             "$ref": "responses.yaml#/responses/otherError"
           }
         }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Update descriptive metadata about a nomenclature class",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/classInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inbody/classDescriptionInBody"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Metadata about nomenclature classes successfully updated.\n",
+            "schema": {
+              "$ref": "timeseries-models.yaml#/definitions/classDescription"
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
       }
     },
     "/classes/{classId}/members": {
@@ -198,6 +252,194 @@ func init() {
                 "$ref": "timeseries-models.yaml#/definitions/class"
               }
             }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Add a new member in a nomenclature class",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/classInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inbody/classMemberInBody"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Class members added.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the newly created resource.\n"
+              },
+              "X-ID": {
+                "type": "integer",
+                "format": "int64",
+                "description": "The ID of the newly created resource.\n"
+              }
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "409": {
+            "$ref": "responses.yaml#/responses/conflict"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      }
+    },
+    "/classes/{classId}/members/{classMemberId}": {
+      "put": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Update a member of a nomenclature class",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/classInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inpath/classMemberInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inbody/classMemberInBody"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Class members updated.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the updated resource.\n"
+              },
+              "X-ID": {
+                "type": "integer",
+                "format": "int64",
+                "description": "The ID of the updated resource.\n"
+              }
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Removes a member from a nomenclature class",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/classInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inpath/classMemberInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inbody/classMemberInBody"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Class members successfully deleted.\n"
           },
           "400": {
             "$ref": "responses.yaml#/responses/badRequest"
@@ -306,6 +548,232 @@ func init() {
             "schema": {
               "$ref": "timeseries-models.yaml#/definitions/conversionSpec"
             }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      }
+    },
+    "/conversions": {
+      "get": {
+        "tags": [
+          "conversions"
+        ],
+        "summary": "List available unit conversions, with some query filters",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inquery/fromUnitInQuery"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inquery/toUnitInQuery"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available unit conversions\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "timeseries-models.yaml#/definitions/conversion"
+              }
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      }
+    },
+    "/conversions/{fromUnit}/{toUnit}": {
+      "put": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Update an existing conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/fromUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inpath/toUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inbody/conversionInBody"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Unit conversion updated.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the updated resource.\n"
+              }
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Creates add new conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/fromUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inpath/toUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inbody/conversionInBody"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Unit conversion added.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the newly create resource.\n"
+              }
+            }
+          },
+          "400": {
+            "$ref": "responses.yaml#/responses/badRequest"
+          },
+          "401": {
+            "$ref": "responses.yaml#/responses/unauthorized"
+          },
+          "403": {
+            "$ref": "responses.yaml#/responses/forbidden"
+          },
+          "404": {
+            "$ref": "responses.yaml#/responses/notfound"
+          },
+          "405": {
+            "$ref": "responses.yaml#/responses/notAllowed"
+          },
+          "409": {
+            "$ref": "responses.yaml#/responses/conflict"
+          },
+          "500": {
+            "$ref": "responses.yaml#/responses/internalError"
+          },
+          "default": {
+            "$ref": "responses.yaml#/responses/otherError"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerToken": [
+              "openid",
+              "email"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Delete an existing conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "$ref": "parameters.yaml#/params/inpath/fromUnitInPath"
+          },
+          {
+            "$ref": "parameters.yaml#/params/inpath/toUnitInPath"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Unit conversion deleted.\n"
           },
           "400": {
             "$ref": "responses.yaml#/responses/badRequest"
@@ -1506,14 +1974,21 @@ func init() {
     }
   },
   "securityDefinitions": {
+    "apiKey": {
+      "description": "API keys are intended to allow for a programmatic use of the API, letting clients consume endpoints.\n\nThis is required for contributors who would like to interact with the API through, say, a R or python client,\nor from they Jupyter python console.\n",
+      "type": "apiKey",
+      "name": "X-API-Key",
+      "in": "header"
+    },
     "bearerToken": {
+      "description": "The oauth2 security scheme is used to authenticate contributors, based on some external\nidentity providers (e.g. Google, github, facebook...).\n\nWe need one such definition for a given identity provider, unless we setup a proxy OIDC with federated identity.\n",
       "type": "oauth2",
       "flow": "accessCode",
       "authorizationUrl": "https://myidentityprovider.org/protocol/openid-connect/authorize",
       "tokenUrl": "https://myidentityprovider/protocol/openid-connect/token",
       "scopes": {
-        "email": "Authorize the API to inquire about the user's email",
-        "openid": "Authorize the API to inquire about standard OpenID claims"
+        "email": "Authorize our API to inquire about the user's email",
+        "openid": "Authorize our API to inquire about standard OpenID claims"
       }
     }
   },
@@ -1580,7 +2055,7 @@ func init() {
   ],
   "swagger": "2.0",
   "info": {
-    "description": "The timeseries API allows contributors to upload time series about their climate change models and studies.\n\nThe API allows the public to search and consult time series about climate change research.\n",
+    "description": "The API allows the public to search and consult time series about climate change research\nconducted by TheShiftProject.\n\nThe climate time series API allows contributors to upload time series about their climate\nchange models and studies.\n\nOther secured endpoints allows admins to maintain the nomenclatures used by the climate\ntime series, such as units etc. Timeseries publication status and ownership is for now managed by admins.\n",
     "title": "Climate time series API",
     "termsOfService": "TODO\n",
     "contact": {
@@ -1763,6 +2238,97 @@ func init() {
             }
           }
         }
+      },
+      "put": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Update descriptive metadata about a nomenclature class",
+        "parameters": [
+          {
+            "enum": [
+              "constant",
+              "mdimension",
+              "mdomain",
+              "measurement",
+              "multiplier",
+              "munit",
+              "musystem",
+              "ostatus",
+              "owner",
+              "period",
+              "role",
+              "source",
+              "status",
+              "theme",
+              "zone",
+              "ztype"
+            ],
+            "type": "string",
+            "description": "The internal name of a nomenclature class.\n\nValid classes are:\n  * constant: mathematical and physical constants\n  * mdimension: base measured dimensions\n  * mdomain: domains that pertain to measurements\n  * measurement: physical and economic measurements\n  * multiplier: unit multipliers aka prefixes (e.g. k,M,G...)\n  * munit: measurement units\n  * musystem: systems of measurement units\n  * ostatus: owner statuses\n  * owner: series owner\n  * period: time series periods (e.g. monthly, yearly...)\n  * role: series owner role\n  * source: data sources\n  * status: series and versions statuses\n  * theme: climate themes\n  * zone: geographical zones\n  * ztype: zone types\n",
+            "name": "classId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Class descriptive metadata.\n",
+            "name": "classDescription",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/classDescription"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Metadata about nomenclature classes successfully updated.\n",
+            "schema": {
+              "$ref": "#/definitions/classDescription"
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
       }
     },
     "/classes/{classId}/members": {
@@ -1896,6 +2462,315 @@ func init() {
             }
           }
         }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Add a new member in a nomenclature class",
+        "parameters": [
+          {
+            "enum": [
+              "constant",
+              "mdimension",
+              "mdomain",
+              "measurement",
+              "multiplier",
+              "munit",
+              "musystem",
+              "ostatus",
+              "owner",
+              "period",
+              "role",
+              "source",
+              "status",
+              "theme",
+              "zone",
+              "ztype"
+            ],
+            "type": "string",
+            "description": "The internal name of a nomenclature class.\n\nValid classes are:\n  * constant: mathematical and physical constants\n  * mdimension: base measured dimensions\n  * mdomain: domains that pertain to measurements\n  * measurement: physical and economic measurements\n  * multiplier: unit multipliers aka prefixes (e.g. k,M,G...)\n  * munit: measurement units\n  * musystem: systems of measurement units\n  * ostatus: owner statuses\n  * owner: series owner\n  * period: time series periods (e.g. monthly, yearly...)\n  * role: series owner role\n  * source: data sources\n  * status: series and versions statuses\n  * theme: climate themes\n  * zone: geographical zones\n  * ztype: zone types\n",
+            "name": "classId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Class member metadata.\n",
+            "name": "classMember",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/class"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Class members added.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the newly created resource.\n"
+              },
+              "X-ID": {
+                "type": "integer",
+                "format": "int64",
+                "description": "The ID of the newly created resource.\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "409": {
+            "description": "Resource already exists. An object creation was requested, but this object was already existing.\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      }
+    },
+    "/classes/{classId}/members/{classMemberId}": {
+      "put": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Update a member of a nomenclature class",
+        "parameters": [
+          {
+            "enum": [
+              "constant",
+              "mdimension",
+              "mdomain",
+              "measurement",
+              "multiplier",
+              "munit",
+              "musystem",
+              "ostatus",
+              "owner",
+              "period",
+              "role",
+              "source",
+              "status",
+              "theme",
+              "zone",
+              "ztype"
+            ],
+            "type": "string",
+            "description": "The internal name of a nomenclature class.\n\nValid classes are:\n  * constant: mathematical and physical constants\n  * mdimension: base measured dimensions\n  * mdomain: domains that pertain to measurements\n  * measurement: physical and economic measurements\n  * multiplier: unit multipliers aka prefixes (e.g. k,M,G...)\n  * munit: measurement units\n  * musystem: systems of measurement units\n  * ostatus: owner statuses\n  * owner: series owner\n  * period: time series periods (e.g. monthly, yearly...)\n  * role: series owner role\n  * source: data sources\n  * status: series and versions statuses\n  * theme: climate themes\n  * zone: geographical zones\n  * ztype: zone types\n",
+            "name": "classId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "The unique identifier of a class member.\n",
+            "name": "classMemberId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Class member metadata.\n",
+            "name": "classMember",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/class"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Class members updated.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the updated resource.\n"
+              },
+              "X-ID": {
+                "type": "integer",
+                "format": "int64",
+                "description": "The ID of the updated resource.\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "classes"
+        ],
+        "summary": "Removes a member from a nomenclature class",
+        "parameters": [
+          {
+            "enum": [
+              "constant",
+              "mdimension",
+              "mdomain",
+              "measurement",
+              "multiplier",
+              "munit",
+              "musystem",
+              "ostatus",
+              "owner",
+              "period",
+              "role",
+              "source",
+              "status",
+              "theme",
+              "zone",
+              "ztype"
+            ],
+            "type": "string",
+            "description": "The internal name of a nomenclature class.\n\nValid classes are:\n  * constant: mathematical and physical constants\n  * mdimension: base measured dimensions\n  * mdomain: domains that pertain to measurements\n  * measurement: physical and economic measurements\n  * multiplier: unit multipliers aka prefixes (e.g. k,M,G...)\n  * munit: measurement units\n  * musystem: systems of measurement units\n  * ostatus: owner statuses\n  * owner: series owner\n  * period: time series periods (e.g. monthly, yearly...)\n  * role: series owner role\n  * source: data sources\n  * status: series and versions statuses\n  * theme: climate themes\n  * zone: geographical zones\n  * ztype: zone types\n",
+            "name": "classId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "integer",
+            "format": "int64",
+            "description": "The unique identifier of a class member.\n",
+            "name": "classMemberId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Class member metadata.\n",
+            "name": "classMember",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/class"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Class members successfully deleted.\n"
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
       }
     },
     "/conversion": {
@@ -1911,17 +2786,15 @@ func init() {
             "type": "string",
             "description": "Original unit to be converted.\n",
             "name": "fromUnit",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "maxLength": 100,
             "minLength": 1,
             "type": "string",
-            "description": "Original unit to be converted.\n",
+            "description": "Target unit result of the conversion.\n",
             "name": "toUnit",
-            "in": "query",
-            "required": true
+            "in": "query"
           },
           {
             "type": "boolean",
@@ -2032,6 +2905,326 @@ func init() {
             "schema": {
               "$ref": "#/definitions/conversionSpec"
             }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      }
+    },
+    "/conversions": {
+      "get": {
+        "tags": [
+          "conversions"
+        ],
+        "summary": "List available unit conversions, with some query filters",
+        "parameters": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "fromUnit",
+            "in": "query"
+          },
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Target unit result of the conversion.\n",
+            "name": "toUnit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available unit conversions\n",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/conversion"
+              }
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      }
+    },
+    "/conversions/{fromUnit}/{toUnit}": {
+      "put": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Update an existing conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "fromUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "toUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Unit conversion specification.\n",
+            "name": "conversionSpec",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/conversionSpec"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Unit conversion updated.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the updated resource.\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Creates add new conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "fromUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "toUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Unit conversion specification.\n",
+            "name": "conversionSpec",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/conversionSpec"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Unit conversion added.\n",
+            "headers": {
+              "Location": {
+                "type": "string",
+                "format": "uri",
+                "description": "The URI of the newly create resource.\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Client error in request. Input did not pass validations. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized access for a lack of authentication\n"
+          },
+          "403": {
+            "description": "Forbidden access for a lack of sufficient privileges\n"
+          },
+          "404": {
+            "description": "Resource not found. The object requested does not exist or is not visible to the user.\n"
+          },
+          "405": {
+            "description": "MethodNotAllowed\n"
+          },
+          "409": {
+            "description": "Resource already exists. An object creation was requested, but this object was already existing.\n"
+          },
+          "500": {
+            "description": "An internal error has occured. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          },
+          "default": {
+            "description": "Other error. See error details.\n",
+            "schema": {
+              "$ref": "#/definitions/apiError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerToken": [
+              "email",
+              "openid"
+            ]
+          },
+          {
+            "apiKey": []
+          }
+        ],
+        "tags": [
+          "conversions"
+        ],
+        "summary": "Delete an existing conversion specification from unit to unit.",
+        "parameters": [
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "fromUnit",
+            "in": "path",
+            "required": true
+          },
+          {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string",
+            "description": "Original unit to be converted.\n",
+            "name": "toUnit",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Unit conversion deleted.\n"
           },
           "400": {
             "description": "Client error in request. Input did not pass validations. See error details.\n",
@@ -4483,14 +5676,21 @@ func init() {
     }
   },
   "securityDefinitions": {
+    "apiKey": {
+      "description": "API keys are intended to allow for a programmatic use of the API, letting clients consume endpoints.\n\nThis is required for contributors who would like to interact with the API through, say, a R or python client,\nor from they Jupyter python console.\n",
+      "type": "apiKey",
+      "name": "X-API-Key",
+      "in": "header"
+    },
     "bearerToken": {
+      "description": "The oauth2 security scheme is used to authenticate contributors, based on some external\nidentity providers (e.g. Google, github, facebook...).\n\nWe need one such definition for a given identity provider, unless we setup a proxy OIDC with federated identity.\n",
       "type": "oauth2",
       "flow": "accessCode",
       "authorizationUrl": "https://myidentityprovider.org/protocol/openid-connect/authorize",
       "tokenUrl": "https://myidentityprovider/protocol/openid-connect/token",
       "scopes": {
-        "email": "Authorize the API to inquire about the user's email",
-        "openid": "Authorize the API to inquire about standard OpenID claims"
+        "email": "Authorize our API to inquire about the user's email",
+        "openid": "Authorize our API to inquire about standard OpenID claims"
       }
     }
   },
