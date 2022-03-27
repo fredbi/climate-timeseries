@@ -1,0 +1,41 @@
+responses:
+  unauthorized:
+    description: |
+      Unauthorized access for a lack of authentication
+  
+  forbidden:
+    description: |
+      Forbidden access for a lack of sufficient privileges
+  
+  notfound:
+    description: |
+      Resource not found. The object requested does not exist or is not visible to the user.
+  
+  notAllowed:
+    description: |
+      MethodNotAllowed
+  
+  conflict:
+    description: |
+      Resource already exists. An object creation was requested, but this object was already existing.
+  
+  internalError:
+    description: |
+      An internal error has occured. See error details.
+
+    schema:
+      $ref: 'timeseries-models.yaml#/definitions/apiError'
+  
+  otherError:
+    description: |
+      Other error. See error details.
+
+    schema:
+      $ref: 'timeseries-models.yaml#/definitions/apiError'
+  
+  badRequest:
+    description: |
+      Client error in request. Input did not pass validations. See error details.
+
+    schema:
+      $ref: 'timeseries-models.yaml#/definitions/apiError'

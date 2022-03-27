@@ -1,0 +1,334 @@
+params:
+  inpath:
+    versionedSeriesInPath: &versionedSeriesId
+      name: versionedSeriesId
+      description: The UUID of a version of the time series.
+      in: path
+      type: string
+      format: uuid
+      required: true
+    
+    semverInPath: &semver
+      name: semver
+      description: "The semver tag of a series' version."
+      in: path
+      type: string
+      format: uuid
+      required: true
+      # TODO: semv regexp validation
+    
+    seriesInPath: &seriesId
+      name: seriesId
+      description: The unique ID of a time series.
+      in: path
+      type: integer
+      format: int64
+      required: true
+    
+    classInPath: &classId
+      name: classId
+      description: |
+        The internal name of a nomenclature class.
+    
+        Valid classes are:
+          * constant: mathematical and physical constants
+          * mdimension: base measured dimensions
+          * mdomain: domains that pertain to measurements
+          * measurement: physical and economic measurements
+          * multiplier: unit multipliers aka prefixes (e.g. k,M,G...)
+          * munit: measurement units
+          * musystem: systems of measurement units
+          * ostatus: owner statuses
+          * owner: series owner
+          * period: time series periods (e.g. monthly, yearly...)
+          * role: series owner role
+          * source: data sources
+          * status: series and versions statuses
+          * theme: climate themes
+          * zone: geographical zones
+          * ztype: zone types
+
+      in: path
+      type: string
+      required: true
+      enum:
+        - constant
+        - mdimension
+        - mdomain
+        - measurement
+        - multiplier
+        - munit
+        - musystem
+        - ostatus
+        - owner
+        - period
+        - role
+        - source
+        - status
+        - theme
+        - zone
+        - ztype
+    
+    themeInPath: &theme
+      name: theme
+      description: |
+        A theme path (url-encoded) to be searched for.
+  
+      in: path
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
+    ownerInPath: &ownerId
+      name: ownerId
+      description: |
+        The ID of the contributor.
+
+      in: path
+      type: string
+      format: uuid
+      required: true
+    
+    zoneInPath: &zone
+      name: zone
+      description: |
+        A zone short code (url-encoded) to be searched for.
+  
+      in: path
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
+    dataSourceInPath: &datasource
+      name: datasource
+      description: |
+        A datasource short code to be searched for.
+      in: path
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+    
+    tagInPath: &tag
+      name: tag
+      description: |
+        Filter the result by search for a given keyword, whenever tag search is applicable.
+    
+        This parameter has no effect on objects where tag search is not applicable.
+    
+      in: path
+      type: string
+      required: true
+      minLength: 1
+      maxLength: 100
+  
+  inquery:
+    themeInQuery:
+      #<<: *theme
+      name: theme
+      description: |
+        A theme path (url-encoded) to be searched for.
+  
+      type: string
+      minLength: 1
+      maxLength: 100
+      in: query
+      required: false
+    
+    ownerInQuery:
+      #<<: *ownerId
+      name: ownerId
+      description: |
+        The ID of the contributor.
+
+      type: string
+      format: uuid
+      in: query
+      required: false
+
+    zoneInQuery:
+      #<<: *zone
+      name: zone
+      description: |
+        A zone short code (url-encoded) to be searched for.
+  
+      type: string
+      minLength: 1
+      maxLength: 100
+      in: query
+      required: false
+    
+    dataSourceInQuery:
+      #<<: *datasource
+      name: datasource
+      description: |
+        A datasource short code to be searched for.
+      type: string
+      minLength: 1
+      maxLength: 100
+      in: query
+      required: false
+    
+    deepInQuery:
+      name: deep
+      description: |
+        When deep is specified, the response will contain a deep representation of the object, rather than just a shallow description.
+      in: query
+      type: boolean
+      required: false
+    
+    briefInQuery:
+      name: brief
+      description: |
+        When brief is specified, the response will only contain essential data and strip long descriptions.
+      in: query
+      type: boolean
+      required: false
+    
+    auditInQuery:
+      name: audit
+      description: |
+        When audit is specified, the response will also contain the audit trail field.
+      in: query
+      type: boolean
+      required: false
+   
+    globInQuery:
+      name: glob
+      description: |
+        Filters the result according to a glob pattern applied on the short name of the requested object.
+      in: query
+      type: string
+      required: false
+      minLength: 1
+      maxLength: 100
+ 
+    tagInQuery:
+      #<<: *tag
+      name: tag
+      description: |
+        Filter the result by search for a given keyword, whenever tag search is applicable.
+    
+        This parameter has no effect on objects where tag search is not applicable.
+    
+      type: string
+      minLength: 1
+      maxLength: 100
+      in: query
+      required: false
+    
+    tagsInQuery:
+      name: tags
+      description: |
+        Filter the result by search for one tag in the given list of keywords, whenever tag search is applicable.
+    
+        Up to 5 tags can be searched.
+ 
+        This parameter has no effect on objects where tag search is not applicable.
+
+      in: query
+      type: array
+      items:
+        type: string
+        minLength: 1
+        maxLength: 100
+      collectionFormat: csv
+      uniqueItems: true
+      maxItems: 5
+      required: false
+    
+    statusInQuery:
+      name: status
+      description: |
+        Filter the result according to a given status.
+    
+        Only series in the "PUBLISHED" status are returned to the public.
+    
+        Series owner may consult their series in any status.
+    
+      in: query
+      type: string
+      required: false
+      enum:
+        - VALIDATED
+        - PUBLISHED
+        - REJECTED
+        - PENDINGV
+        - PENDINGP
+    
+    fromInQuery:
+      name: from
+      description: |
+        Truncates values starting from this date (boundary is included).
+    
+      in: query
+      type: string
+      format: date-time
+      required: false
+    
+    toInQuery:
+      name: to
+      description: |
+        Truncates values up to this date (boundary is included).
+    
+      in: query
+      type: string
+      format: date-time
+      required: false
+    
+    emailInQuery:
+      name: email
+      description: |
+        Refers to some data owner by email.
+    
+      in: query
+      type: string
+      required: false
+      minLength: 1
+      maxLength: 100
+    
+    convertInQuery:
+      name: convert
+      description: |
+        Converts values in some other compatible measurement unit, possibly specified as a composite measurement unit.
+    
+      in: query
+      type: string
+      required: false
+      minLength: 1
+      maxLength: 100
+    
+  inbody:
+    seriesInBody:
+      name: series
+      description: |
+        The description of a time series.
+    
+      in: body
+      required: true
+      schema:
+        $ref: 'timeseries-models.yaml#/definitions/series'
+
+    versionedSeriesInBody:
+      name: versionSeries
+      description: |
+        The description of a version of a time series.
+    
+      in: body
+      required: true
+      schema:
+        $ref: 'timeseries-models.yaml#/definitions/versionedSeries'
+    
+    valuesInBody:
+      name: values
+      description: |
+        The values of a time series
+    
+      in: body
+      required: true
+      schema:
+        $ref: 'timeseries-models.yaml#/definitions/tsValues'
+     
+# TODO: windowing

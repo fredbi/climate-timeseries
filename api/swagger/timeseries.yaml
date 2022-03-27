@@ -1,0 +1,1145 @@
+---
+
+swagger: '2.0'
+host: 'api.example.com'
+info:
+  title: Climate time series API
+  description: |
+    The timeseries API allows contributors to upload time series about their climate change models and studies.
+
+    The API allows the public to search and consult time series about climate change research.
+  version: 'v0.0.1'
+  termsOfService: |
+    TODO
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name: Frédéric BIDON (Shifter, volunteer)
+    email: fredbi@yahoo.com
+    url: https://github.com/fredbi
+
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /v1/
+
+securityDefinitions:
+  bearerToken:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: 'https://myidentityprovider.org/protocol/openid-connect/authorize'
+    tokenUrl: 'https://myidentityprovider/protocol/openid-connect/token'
+    scopes:
+      'openid': "Authorize the API to inquire about standard OpenID claims"
+      'email': "Authorize the API to inquire about the user's email"
+
+tags:
+  - name: classes
+    description: |
+      Classes represent the various nomenclatures used by the time series, such as
+      measurement units and data sources.
+
+    externalDocs:
+      description: |
+        API concepts: classes.
+
+      url: https://github.io/wiki/TODO
+
+  - name: series
+    description: |
+      Series represent time series of measurements.
+
+    externalDocs:
+      description: |
+        API concepts: series.
+
+      url: https://github.io/wiki/TODO
+
+  - name: tags
+    description: |
+      Tags are keywords that may be used to search and classify series, data source and climate themes.
+
+    externalDocs:
+      description: |
+        API concepts: tags.
+
+      url: https://github.io/wiki/TODO#tags
+
+  - name: versioning
+    description: |
+      Timeseries are versioned.
+
+    externalDocs:
+      description: |
+        API concepts: series versioning
+
+      url: https://github.io/wiki/TODO#versions
+
+  - name: semver
+    description: |
+      Semantic version tags ("semver") identify a checked-in time series.
+
+    externalDocs:
+      description: |
+        API concepts: semver.
+
+      url: https://github.io/wiki/TODO#semver
+
+paths:
+  /classes:
+    get:
+      tags: [classes]
+      summary: Get all valid nomenclature classes
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inquery/globInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+
+      responses: &SuccessWithDefaults
+        '200':
+          description: |
+            A collection of nomenclature classes.
+          schema:
+            type: array
+            items:
+              $ref: 'timeseries-models.yaml#/definitions/class'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /classes/{classId}:
+    get:
+      tags: [classes]
+      summary: Get metadata about a nomenclature class
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Descriptive metadata about nomenclature classes.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/classDescription'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /classes/{classId}/members:
+    get:
+      tags: [classes]
+      summary: Get all the members of a nomenclature class
+      description: |
+        Returns a a collection of nomenclature class members.
+
+        Example:
+          GET /classes/munit/members returns all measurement units.
+
+        If the request negotiates a response MIME type with text/csv (with the Accept header),
+        this endpoint produces a CSV file.
+
+      externalDocs:
+        description: |
+          API responses: nomenclature values
+        url: https://github.io/wiki/TODO#classcsv
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/classInPath'
+        - $ref: 'parameters.yaml#/params/inquery/globInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/tagInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/tagsInQuery'
+
+      produces:
+        - application/json
+        - text/csv
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Nomenclature class members.
+
+          schema:
+            type: array
+            items:
+              $ref: 'timeseries-models.yaml#/definitions/class'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series:
+    get:
+      tags: [series]
+      summary: Get all available series, with search filters
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inquery/globInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/tagInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/tagsInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/themeInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/zoneInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/statusInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/ownerInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/dataSourceInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/emailInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Available climate timeseries.
+
+          schema:
+            type: array
+            items:
+              $ref: 'timeseries-models.yaml#/definitions/series'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    post:
+      tags: [series]
+      summary: Creates a new time series
+      description: |
+        This creates a new time time series.
+
+        If some values are specified, the initial version for the new series is created with these values.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inbody/seriesInBody'
+
+      responses: &CreatedWithDefaults
+        '201':
+          description: |
+            Series successfully created.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly created resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the newly created resource.
+              type: integer
+              format: int64
+            X-LocationVersion:
+              description: |
+                The URI of the newly created versioned resource, whenever applicable.
+              type: string
+              format: uri
+            X-VersionID:
+              description: |
+                The UUID of the newly created versioned resource, whenever applicable.
+              type: string
+              format: uuid
+        '409':
+          $ref: 'responses.yaml#/responses/conflict'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/{seriesId}:
+
+    get:
+      tags: [series]
+      summary: Get all versions of a time series.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inquery/globInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/statusInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            All available versions of a climate timeseries.
+
+          schema:
+            type: array
+            items:
+              $ref: 'timeseries-models.yaml#/definitions/versionedSeries'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    post:
+      tags: [series]
+      summary: Creates a new version of a time series
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inbody/seriesInBody'
+
+      responses:
+        #<<: *CreatedWithDefaults
+        '201':
+          description: |
+            Series version successfully created.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly created versioned resource.
+              type: string
+              format: uri
+            X-LocationVersion:
+              description: |
+                The URI of the newly created versioned resource.
+              type: string
+              format: uri
+            X-VersionID:
+              description: |
+                The UUID of the newly created versioned resource.
+              type: string
+              format: uuid
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    put:
+      tags: [series]
+      summary: Updates metadata about a time series
+      description: |
+        This action only updates metadata about the series (such as associated themes, tags, etc) and does not create a new version.
+
+        Only owners registered for a series may update the series.
+
+        Any time series values specified in the input are ignored. One must update a specific version to modify the values of a time series.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inbody/seriesInBody'
+
+      responses: &UpdatedWithDefaults
+        '204':
+          description: |
+            Series successfully updated.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    delete:
+      tags: [series]
+      summary: Deletes a time series
+      description: |
+        All versions and values associated to this series are deleted.
+
+        Only the original owner of a series may delete it.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+
+      responses:
+        #<<: *UpdatedWithDefaults
+        '204':
+          description: |
+            Series successfully deleted.
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/{seriesId}/latest:
+
+    get:
+      tags: [series]
+      summary: Get the latest version of the description of a time series
+      description: |
+        The latest version is determined according to semantic versioning rules (e.g. v1.2.3 < v1.2.4).
+
+        Unless requested by the query parameters, the time series values are not returned by default.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/statusInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Latest available version of a time series.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/versionedSeries'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/{seriesId}/latest/values:
+
+    get:
+      tags: [series]
+      summary: Get the values from the latest version of a time series
+      description: |
+        The latest version is determined according to semantic versioning rules (e.g. v1.2.3 < v1.2.4).
+
+        Values are returned in chronological order.
+
+        If the request negotiates a response MIME type with text/csv (with the Accept header),
+        this endpoint produces a CSV file.
+
+      externalDocs:
+        description: |
+          API responses: time series values
+        url: https://github.io/wiki/TODO#seriescsv
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inquery/fromInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/convertInQuery'
+
+      produces:
+        - application/json
+        - text/csv
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Time series values.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/tsValues'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/{seriesId}/semver:
+    get:
+      tags: [series,semver]
+      summary: Get all semver tags associated to a series
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            All semver tagged versions available for a time series.
+
+          schema:
+            type: array
+            items:
+              type: string
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/{seriesId}/semver/{semver}:
+
+    get:
+      tags: [series,semver]
+      summary: Get a version of a time series with a semver tag
+      description: |
+        Semver tags follow semantic versioning rules (e.g. v1.2.3, v1.2.3-rc1, v1.3.0 ...).
+
+        Unless requested by the query parameters, the time series values are not returned by default.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inpath/semverInPath'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Versioned time series for a given semver tag.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/versionedSeries'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/{seriesId}/semver/{semver}/values:
+    get:
+      tags: [series,semver]
+      summary: Get the values of version of a time series with a semver tag
+      description: |
+
+        If the request negotiates a response MIME type with text/csv (with the Accept header),
+        this endpoint produces a CSV file.
+
+      externalDocs:
+        description: |
+          API responses: time series values
+        url: https://github.io/wiki/TODO#seriescsv
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/seriesInPath'
+        - $ref: 'parameters.yaml#/params/inpath/semverInPath'
+        - $ref: 'parameters.yaml#/params/inquery/fromInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/convertInQuery'
+
+      produces:
+        - application/json
+        - text/csv
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Values of a given version of a time series.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/tsValues'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/versions/{versionedSeriesId}:
+    get:
+      tags: [series,versioning]
+      summary: Get a version of a time series
+      description: |
+        Unless requested by the query parameters, the time series values are not returned by default.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Description of a given version of a time series.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/versionedSeries'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    post:
+      tags: [series,versioning]
+      summary: creates a new version of a time series
+      description: |
+        A conflict is reported if the version was already attributed to a version of the same series. Use PUT to update existing values.
+
+      externalDocs:
+        description: |
+          API inputs: time series version.
+
+        url: https://github.io/wiki/TODO#seriesversion
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+        - $ref: 'parameters.yaml#/params/inbody/versionedSeriesInBody'
+
+      responses:
+        #<<: *CreatedWithDefaults
+        '201':
+          description: |
+            Time series version successfully created.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly created resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    put:
+      tags: [series,versioning]
+      summary: Updates the metadata of version of a time series
+      description: |
+        This endpoint replaces the metadata for the requested version, without creating a new version.
+
+        Only the owners of the time series may modify values.
+
+      externalDocs:
+        description: |
+          API inputs: time series version.
+
+        url: https://github.io/wiki/TODO#seriesversion
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+        - $ref: 'parameters.yaml#/params/inbody/versionedSeriesInBody'
+
+      responses:
+        #<<: *UpdatedWithDefaults
+        '204':
+          description: |
+            Time series values successfully updated.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-LocationVersion:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-VersionID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    delete:
+      tags: [series,versioning]
+      summary: Deletes a version of a time series
+      description: |
+        Only the original owner of this version of the series may delete it.
+
+        All values associated to that version are deleted.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+
+      responses:
+        #<<: *UpdatedWithDefaults
+        '204':
+          description: |
+            Version of the time series successfully deleted.
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /series/versions/{versionedSeriesId}/values:
+    get:
+      tags: [series,versioning]
+      summary: Get the values of version of a time series
+      description: |
+        If the request negotiates a response MIME type with text/csv (with the Accept header),
+        this endpoint produces a CSV file.
+
+      externalDocs:
+        description: |
+          API responses: time series values.
+
+        url: https://github.io/wiki/TODO#seriescsv
+
+      produces:
+        - application/json
+        - text/csv
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+        - $ref: 'parameters.yaml#/params/inquery/fromInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/toInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/convertInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            Values of a given version of a time series.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/tsValues'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    post:
+      tags: [series,versioning]
+      summary: Uploads values to the version of a time series
+      description: |
+        This endpoint creates time series values for the latest version.
+
+        Only the owners of the time series may add values.
+
+        A conflict is reported if values were already attributed to this version. Use PUT to update existing values.
+
+        If the request negotiates a request MIME type with text/csv (with the Content-Type header),
+        this endpoint consumes a CSV file.
+
+      externalDocs:
+        description: |
+          API inputs: time series values.
+
+        url: https://github.io/wiki/TODO#seriescsv
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+        - $ref: 'parameters.yaml#/params/inbody/valuesInBody'
+
+      consumes:
+        - application/json
+        - text/csv
+        #- application/csv
+        #- text/comma-separated-values
+        #- application/vnd.ms-ms-excel
+        #- application/vnd.ms-msexcel
+
+      responses:
+        #<<: *CreatedWithDefaults
+        '201':
+          description: |
+            Time series values successfully created.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the newly created resource.
+              type: string
+              format: uri
+            X-ID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    put:
+      tags: [series,versioning]
+      summary: Replaces the values of version of a time series
+      description: |
+        This endpoint replaces time series values for the requested version, without creating a new version.
+
+        Only the owners of the time series may modify values.
+
+        A conflict is reported if values were already attributed to this version. Use PUT to update existing values.
+
+        If the request negotiates a request MIME type with text/csv (with the Content-Type header),
+        this endpoint consumes a CSV file.
+
+      externalDocs:
+        description: |
+          API responses: time series values.
+
+        url: https://github.io/wiki/TODO#seriescsv
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+        - $ref: 'parameters.yaml#/params/inbody/valuesInBody'
+
+      consumes:
+        - application/json
+        - text/csv
+        #- application/csv
+        #- text/comma-separated-values
+        #- application/vnd.ms-ms-excel
+        #- application/vnd.ms-msexcel
+
+      responses:
+        #<<: *UpdatedWithDefaults
+        '204':
+          description: |
+            Time series values successfully updated.
+
+            Check the response headers to retrieve this resource.
+
+          headers:
+            Location:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-LocationVersion:
+              description: |
+                The URI of the updated resource.
+              type: string
+              format: uri
+            X-VersionID:
+              description: |
+                The ID of the updated resource.
+              type: integer
+              format: int64
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+    delete:
+      tags: [series,versioning]
+      summary: Deletes the values attached to a version of a time series
+      description: |
+        Only the original owner of this version of the series may delete it.
+
+        The version is not deleted. Only the values associated to that version are deleted.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/versionedSeriesInPath'
+
+      responses:
+        #<<: *UpdatedWithDefaults
+        '204':
+          description: |
+            Values of the versioned time series successfully deleted.
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /search/tags:
+    get:
+      tags: [tags]
+      summary: List all known tags
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            All known search tags.
+
+          schema:
+            type: array
+            items:
+              type: string
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'
+
+  /search/tags/{tag}:
+
+    get:
+      tags: [tags]
+      summary: Search all entities with some tag
+      description: |
+        This endpoint returns mulitple entities, such as classes or series.
+
+      parameters:
+        - $ref: 'parameters.yaml#/params/inpath/tagInPath'
+        - $ref: 'parameters.yaml#/params/inquery/statusInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/deepInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/briefInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/auditInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/ownerInQuery'
+        - $ref: 'parameters.yaml#/params/inquery/emailInQuery'
+
+      responses:
+        #<<: *SuccessWithDefaults
+        '200':
+          description: |
+            All entities that match the searched tag.
+
+          schema:
+            $ref: 'timeseries-models.yaml#/definitions/entities'
+        '400':
+          $ref: 'responses.yaml#/responses/badRequest'
+        '401':
+          $ref: 'responses.yaml#/responses/unauthorized'
+        '403':
+          $ref: 'responses.yaml#/responses/forbidden'
+        '404':
+          $ref: 'responses.yaml#/responses/notfound'
+        '405':
+          $ref: 'responses.yaml#/responses/notAllowed'
+        '500':
+          $ref: 'responses.yaml#/responses/internalError'
+        default:
+          $ref: 'responses.yaml#/responses/otherError'

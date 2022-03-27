@@ -1,0 +1,634 @@
+definitions:
+  vstatus:
+    type: string
+    enum:
+      - VALIDATED
+      - PUBLISHED
+      - REJECTED
+      - PENDINGV
+      - PENDINGP
+
+  className:
+    enum:
+      - constant
+      - mdimension
+      - mdomain
+      - measurement
+      - munit
+      - multiplier
+      - musystem
+      - ostatus
+      - owner
+      - period
+      - role
+      - source
+      - status
+      - theme
+      - zone
+      - ztype
+
+  extra:
+    description: reserved for future use
+    type: object
+    additionalProperties: true
+
+  mumeta:
+    description: |
+      Measurement units metadata, for rendering (symbol glyphs, aliases...)
+    type: object
+    properties:
+      extra:
+        $ref: '#/definitions/extra'
+
+  translation:
+    description: |
+      Translation is a multi-language string.
+    type: object
+    additionalProperties:
+      type: string
+    example:
+      fr: exemple de description
+      en: description example
+
+  compositeUnit:
+    description: |
+      A composite measurement unit is built from base units with a formula.
+      TODO doc.
+
+    type: object
+    additionalProperties: true
+    example: {}
+    # custom object with custom validation
+ 
+  geometry:
+    description: |
+      A geojson geometry.
+
+    type: object
+    additionalProperties: true
+    # custom object with custom validation
+
+  searchTags:
+    type: array
+    items:
+      type: string
+      minLength: 1
+      maxLength: 100
+
+  document:
+    type: object
+    properties:
+      url:
+        type: string
+        format: uri
+    x-nullable: false
+
+  documents:
+    type: array
+    items:
+      $ref: '#/definitions/document'
+
+  semver:
+    type: string
+    x-go-type:
+      type: Semver
+      import:
+        package: github.com/fredbi/climate-timeseries/pkg/restapi/extra
+
+  audit:
+    readOnly: true
+    type: object
+    properties:
+      createdAt:
+        type: string
+        format: date-time
+      createdBy:
+        type: string
+      lastUpdatedAt:
+        type: string
+        format: date-time
+      lastUpdatedBy:
+        type: string
+
+  versionedSeries:
+    type: object
+    description: |
+      A version of a time series.
+
+      The brief description omits versionDescriptionLong, versionStatusChangeReason, tags, linkedDocuments and auditTrail.
+
+      The field auditTrail is read-only and requires the "audit" query parameter to be retrieved.
+
+      The field timeseries requires the "deep" query parameter to be retrieved.
+    required: [version,versionedId,versionStatus]
+    properties:
+      version:
+        $ref: '#/definitions/semver'
+      versionedId:
+        type: string
+        format: uuid
+        readOnly: true
+      versionOwner:
+        type: string
+        format: uuid
+      versionStatus:
+        $ref: '#/definitions/vstatus'
+      parentVersionedId:
+        type: string
+        format: uuid
+      formula:
+        type: string
+      versionStatusChangeReason:
+        $ref: '#/definitions/translation'
+      versionTitle:
+        $ref: '#/definitions/translation'
+      versionDescriptionShort:
+        $ref: '#/definitions/translation'
+      versionDescriptionLong:
+        $ref: '#/definitions/translation'
+      timeseries:
+        $ref: '#/definitions/tsValues'
+      auditTrail:
+        $ref: '#/definitions/audit'
+    x-nullable: false
+
+  series:
+    type: object
+    description: |
+      A time series.
+
+      The brief description omits descriptionLong, statusChangeReason, tags, linkedDocuments and auditTrail.
+
+      The field auditTrail is read-only and requires the "audit" query parameter to be retrieved.
+
+      The field seriesHasVersions requires the "deep" query parameter to be retrieved.
+
+    required: [id,title,measurementUnit,timePeriod,status,zone,dataSource]
+    properties:
+      id:
+        type: integer
+      title:
+        $ref: '#/definitions/translation'
+      descriptionShort:
+        $ref: '#/definitions/translation'
+      descriptionLong:
+        $ref: '#/definitions/translation'
+      timePeriod:
+        $ref: '#/definitions/period'
+      measurementUnit:
+        $ref: '#/definitions/munit'
+      inputComposedUnit:
+        $ref: '#/definitions/compositeUnit'
+      status:
+        $ref: '#/definitions/vstatus'
+      statusChangeReason:
+        $ref: '#/definitions/translation'
+      zone:
+        $ref: '#/definitions/zone'
+      dataSource:
+        $ref: '#/definitions/source'
+      tags:
+        $ref: '#/definitions/searchTags'
+      linkedDocuments:
+        $ref: '#/definitions/documents'
+      auditTrail:
+        $ref: '#/definitions/audit'
+
+      # linked entities
+      seriesHasThemes: 
+        type: array
+        items:
+          $ref: '#/definitions/theme'
+      seriesHasOwners: 
+        type: array
+        items:
+          $ref: '#/definitions/owner'
+      seriesHasVersions: 
+        type: array
+        items:
+          $ref: '#/definitions/versionedSeries'
+      
+  ts:
+    type: string
+    format: date-time
+    x-go-type:
+      type: Timestamp
+      import:
+        package: github.com/fredbi/climate-timeseries/pkg/restapi/extra
+ 
+  tsValue:
+    type: object
+    properties:
+      t:
+        $ref: '#/definitions/ts'
+      v:
+        type: number
+        format: float
+    x-nullable: false
+
+  tsValues:
+    type: array
+    items:
+      $ref: '#/definitions/tsValue'
+
+  # TODO: ts variants
+  #vectorValues:
+  #anyValues:
+
+  entities:
+    type: array
+    items:
+      type: object
+    x-go-type:
+      type: Entities
+      import:
+        package: github.com/fredbi/climate-timeseries/pkg/restapi/models/polymorphs
+   
+  conversion:
+    description: |
+      Unit conversions.
+
+    allOf:
+      - type: object
+        required: [fromUnit,toUnit]
+        properties:
+          fromUnit:
+            $ref: '#/definitions/munit'
+          toUnit:
+            $ref: '#/definitions/munit'
+          auditTrail:
+            $ref: '#/definitions/audit'
+      - $ref: '#/definitions/conversionSpec'
+
+  conversionSpec:
+    description: |
+      Unit conversion specification.
+
+    type: object
+    required: [toUnitCode]
+    properties:
+      toUnitCode:  
+        type: string
+      factor:
+        type: number
+        format: float
+      intercept:
+        type: number
+        format: float
+      formula:
+        type: string
+        x-go-type:
+          type: Formula
+          import:
+            package: github.com/fredbi/climate-timeseries/pkg/restapi/extra/expressions
+      reverse_formula:
+        type: string
+        x-go-type:
+          type: Formula
+          import:
+            package: github.com/fredbi/climate-timeseries/pkg/restapi/extra/expressions
+    x-nullable: false
+
+  apiError:
+    type: object
+    properties:
+      code: 
+        type: string
+      message: 
+        type: string
+  
+  class:
+    type: object
+    discriminator: shortCode
+    required: [id,shortCode,title]
+    properties:
+      id:
+        type: integer
+        readOnly: true
+      shortCode:
+        $ref: '#/definitions/className'
+      title:
+        $ref: '#/definitions/translation'
+      descriptionShort:
+        $ref: '#/definitions/translation'
+      descriptionLong:
+        $ref: '#/definitions/translation'
+      auditTrail:
+        $ref: '#/definitions/audit'
+
+  classMetadata:
+    description: |
+      Metadata used by UIs to render classes.
+
+    type: object
+    properties:
+      fromTemplate:
+        type: boolean
+      tagSearch:
+        type: boolean
+      extraFields:
+        type: array
+        items:
+          type: string
+      hasOneClass:
+        type: object
+        additionalProperties:
+          type: string
+      hasZeroOneClass:
+        type: object
+        additionalProperties:
+          type: string
+      hasZeroManyClass:
+        type: object
+        additionalProperties:
+          type: string
+
+  classDescription:
+    description: |
+      Metadata about nomenture classes.
+
+    type: object
+    required: [class,tableName,title,descriptionShort,descriptionLong,metadata]
+    properties:
+      class:
+        $ref: '#/definitions/className'
+      tableName:
+        type: string
+      title:
+        $ref: '#/definitions/translation'
+      descriptionShort:
+        $ref: '#/definitions/translation'
+      descriptionLong:
+        $ref: '#/definitions/translation'
+      metadata:
+        $ref: '#/definitions/classMetadata'
+
+  constant:
+    type: object
+    description: |
+      Mathematical and physical constants.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        required: [symbol,value,metadata]
+        properties:
+          symbol:
+            type: string
+            minLength: 1
+            maxLength: 10
+          value:
+            type: number
+            format: float
+          metadata:
+            $ref: '#/definitions/mumeta'
+          measurementUnit:
+            $ref: '#/definitions/munit'
+          constantHasMeasurementDomains:
+            type: array
+            items:
+              $ref: '#/definitions/mdomain'
+    x-nullable: false
+
+  mdomain:
+    type: object
+    description: |
+      Measurement domains: this is a domain in which a kind of measurement applies.
+
+      Examples:
+        Measuring speed is useful in aeronautics and mechanics, but not so much in construction.
+
+        Torque is used in mechanics but not so much in chemistry.
+
+      Domains also apply to constants.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  mdimension:
+    type: object
+    description: |
+      Measurement dimensions list the 7 fundamental physical measures, plus money for economics.
+
+      For more, see https://en.wikipedia.org/wiki/SI_base_unit.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        properties:
+    x-nullable: false
+
+  measurement:
+    type: object
+    description: |
+      A measurement refers to any physical or economic measurement, the unit notwithstanding.
+
+      Examples:
+        * speed
+        * temperature
+
+      We introduce "quantity" to take into account measurement that count things, as well as "currency"
+      to take into account measurements of economic facts.
+
+      Measurements usually refer to one or several physical (or economic) dimensions.
+
+      Example:
+        speed is homogeneous to "L^T-1"
+
+      However, some measurements are without dimension, such as "QUANTITY" and "ANGLE".
+
+      Series of ratios (e.g. % increase of GDP) are not considered measurements. They shall use special units which do not refer to measurements.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        properties:
+          dimensions:
+            type: string
+            x-go-type:
+              type: DimensionsFormula
+              import:
+                package: github.com/fredbi/climate-timeseries/pkg/restapi/extra/expressions
+          measurementHasMeasurementDomains:
+            type: array
+            items:
+              $ref: '#/definitions/mdomain'
+    x-nullable: false
+
+  multiplier:
+    type: object
+    description: |
+      Multipliers using to prefix measurement units (e.g. m,c,d,da,h,k,M,G...).
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  musystem:
+    type: object
+    description: |
+      Measurement unit systems.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  munit:
+    type: object
+    description: |
+      Measurement units are used to quantify values provided by time series.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        required: [isStandard]
+        properties:
+          isStandard:
+            type: boolean
+          includedMultiplier:
+            $ref: '#/definitions/multiplier'
+          unitMeasurement:
+            $ref: '#/definitions/measurement'
+          unitMeasurementSystem:
+            $ref: '#/definitions/musystem'
+          metadata:
+            $ref: '#/definitions/mumeta'
+          measurementUnitHasConversions:
+            type: array
+            items:
+              $ref: '#/definitions/conversionSpec'
+    x-nullable: false
+
+  ostatus:
+    type: object
+    description: |
+      Status of owners.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  owner:
+    type: object
+    description: |
+      Owners are the maintainers of timeseries and nomenclatures.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        required: [uuid,name,email,ownerStatus]
+        properties:
+          uuid:
+            type: string
+            format: uuid
+            readOnly: true
+          name:
+            type: string
+            minLength: 1
+          email:
+            type: string
+            format: email
+          ownerStatus:
+            $ref: '#/definitions/ostatus'
+    x-nullable: false
+
+  period:
+    type: object
+    description: |
+      A period describe the periodicity of a time series, e.g. quarterly, yearly, ...
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  role:
+    type: object
+    description: |
+      Roles qualify how owners contribute to this or that piece of data.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  source:
+    type: object
+    description: |
+      Data sources.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        properties:
+          rating:
+            type: integer
+            format: int64
+            minimum: 0
+            maximum: 10
+          tags:
+            type: array
+            items:
+              type: string
+              minLength: 1
+              maxLength: 100
+    x-nullable: false
+
+  status:
+    type: object
+    description: |
+      Object statuses.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false
+
+  theme:
+    type: object
+    description: |
+      Climate themes.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        properties:
+          tags:
+            type: array
+            items:
+              type: string
+              minLength: 1
+              maxLength: 100
+          linkedDocuments:
+            $ref: '#/definitions/documents'
+    x-nullable: false
+
+  zone:
+    type: object
+    description: |
+      Geographical zones.
+
+    allOf:
+      - $ref: '#/definitions/class'
+      - type: object
+        required: [zoneType]
+        properties:
+          zoneType:
+            $ref: '#/definitions/ztype'
+          zoneGeometry:
+            $ref: '#/definitions/geometry'
+    x-nullable: false
+
+  ztype:
+    type: object
+    description: |
+      Typology of geographical zones (e.g. world, country, ...)
+    allOf:
+      - $ref: '#/definitions/class'
+      - $ref: '#/definitions/extra'
+    x-nullable: false

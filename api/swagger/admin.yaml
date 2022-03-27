@@ -1,0 +1,50 @@
+---
+
+swagger: '2.0'
+host: 'api.example.com'
+info:
+  title: Climate timeseries - Admin API
+  description: |
+    The timeseries admin API allows to maintain the nomenclatures used by Climate Timeseries,
+    such as units etc.
+
+    Timeseries publication status and ownership may be modified.
+  version: 'v0.0.1'
+  termsOfService: |
+    TODO
+  licence:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  contact: 
+    name: Frédéric BIDON (Shifter, volunteer) 
+    email: fredbi@yahoo.com
+    url: TODO
+
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+basePath: /admin/v1/
+
+securityDefinitions:
+  bearerToken:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: 'https://myidentityprovider.org/protocol/openid-connect/authorize'
+    tokenUrl: 'https://myidentityprovider/protocol/openid-connect/token'
+    scopes: {'email'}
+
+security:
+  - bearerToken: []
+
+externalDocs:
+  description: Climate Timeseries API concepts
+  url: https://github.io/wiki/TODO
+
+parameters:
+  $ref: parameters.yaml
+
+responses:
+  $ref: responses.yaml

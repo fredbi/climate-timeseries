@@ -1,4 +1,5 @@
 include hack/termcolor.mk
+include api/swagger/genswagger.mk
 
 .PHONY: create-db
 ## Creates a database and apply migrations
