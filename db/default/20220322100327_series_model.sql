@@ -272,6 +272,7 @@ COMMENT ON TABLE measurement_dimensions IS
 ;
 
 INSERT INTO measurement_dimensions(short_code, title) VALUES
+('1', '{"fr": "sans dimension", "en": "dimensionless"}'),
 ('L', '{"fr": "longueur", "en": "length"}'),
 ('M', '{"fr": "masse", "en": "mass"}'),
 ('T', '{"fr": "temps", "en": "time"}'),
@@ -308,8 +309,8 @@ COMMENT ON COLUMN measurements.dimensions IS
 INSERT INTO measurements(short_code, title, dimensions) VALUES
 -- dimension-less measurements
 ('QUANTITY', '{"fr": "quantité (unités)", "en":"amount (units)"}',NULL),
-x('ANGLE', '{"fr": "angle", "en":"angle"}','rad'),
-x('SOLID_ANGLE', '{"fr": "angle solide", "en":"solid angle"}','sr'),
+('ANGLE', '{"fr": "angle", "en":"angle"}','rad'),
+('SOLID_ANGLE', '{"fr": "angle solide", "en":"solid angle"}','sr'),
 -- non-physical: money
 ('CURRENCY', '{"fr": "devise", "en":"currency"}', '$'),
 -- the 7 base measurements recognized by the international system
@@ -323,34 +324,50 @@ x('SOLID_ANGLE', '{"fr": "angle solide", "en":"solid angle"}','sr'),
 -- derived measurements
 ('AREA', '{"fr": "surface", "en":"area"}','L^2'),
 ('VOLUME', '{"fr": "volume", "en":"volume"}', 'L^3'),
---
-x('FREQUENCY', '{"fr": "fréquence", "en":"fréquence"}', 'T^-1'),
+('VOLUMETRIC_FLOW', '{"fr": "flux volumique", "en":"volumetric flow"}', 'L^3.T-1'),
 ('VOLUMIC_MASS', '{"fr": "masse volumique", "en":"volumic mass"}', 'M.L^-3'),
-('SPEED', '{"fr": "vitesse", "en":"speed"}', 'L.T^-1'),
-('ACCELERATION', '{"fr": "accélération", "en":"acceleration"}', 'L.T^-2'),
+('AREA_DENSITY', '{"fr": "densité surfacique", "en":"area density"}', 'M.L^-2'),
 --
-x('ENERGY', '{"fr": "énergie", "en":"energy"}', 'M.L^2.T^-2'),
-x('POWER', '{"fr": "puissance", "en":"power"}', 'M.L^2.T^-3'),
+('FREQUENCY', '{"fr": "fréquence", "en":"fréquence"}', 'T^-1'),
+('FREQUENCY_DRIFT', '{"fr": "dérive de fréquence", "en":"frequency drift"}', 'T^-2'),
+('SPEED', '{"fr": "vitesse", "en":"speed"}', 'L.T^-1'),
+('ANGULAR_VELOCITY', '{"fr": "vitesse angulaire", "en":"angular velocity"}', 'rad.T^-1'),
+('ACCELERATION', '{"fr": "accélération", "en":"acceleration"}', 'L.T^-2'),
+('ANGULAR_ACCELERATION', '{"fr": "accélération angulaire", "en":"angular acceleration"}', 'rad.T^-2'),
+--
+('ENERGY', '{"fr": "énergie", "en":"energy"}', 'M.L^2.T^-2'),
+('POWER', '{"fr": "puissance", "en":"power"}', 'M.L^2.T^-3'),
+('ENERGY_DENSITY', '{"fr": "densité energétique", "en":"energy density"}', 'L^-1.M.T^-2'),
+('SURFACE_TENSION', '{"fr": "tension surfacique", "en":"surface tension"}', 'M.T^-2'),
+--
+('VOLTAGE', '{"fr": "tension électrique", "en":"electric voltage"}','M.L^2.T^-3.I^-1'),
+('INDUCTION', '{"fr": "induction magnétique", "en":"magnetic induction"}','M.T^-2.I^-1'),
+('ELECTRIC_CHARGE', '{"fr": "charge électrique", "en":"electric charge"}', 'T.I'),
+('ELECTRICAL_CAPACITANCE', '{"fr": "capacité électrique", "en":"electrical capacitance"}','M^-1.L^-2.T^4.I^2'),
+('ELECTRICAL_CONDUCTANCE', '{"fr": "conductance électrique", "en":"electrical conducatance"}','M^-1.L^-2.T^3.I^2'),
+('ELECTRICAL_RESISTANCE', '{"fr": "résistance électrique", "en":"electrical resistance"}','M.L^2.T^-3.I^-2'),
+('ELECTRICAL_INDUCTANCE', '{"fr": "inductance électrique", "en":"electrical inductance"}','M.M^2.T^-2.I-2'),
+('MAGNETIC_FLUX', '{"fr": "flux magnétique", "en":"magnetic flux"}','M.L^2.T^-2.I^-1'),
+('MAGNETIC_INDUCTION', '{"fr": "induction magnétique", "en":"magnetic induction"}','M.T^-2.I^-1'),
+--
+('LUMINOUS_FLUX', '{"fr": "flux lumineux", "en":"luminous flux"}', 'J.sr^-1'),
+('ILLUMINANCE', '{"fr": "luminance", "en":"illuminance"}', 'J.m^-2'),
+('FORCE', '{"fr": "force", "en":"force"}', 'M.L.T^-2'),
+('TORQUE', '{"fr": "couple", "en":"torque"}', 'M.L^2.T^-2'),
+('PRESSURE', '{"fr": "pression", "en":"pressure"}', 'M.L^-1.T^-2'),
+('MOMENTUM', '{"fr": "moment", "en":"momentum"}', 'M.L.T^-1'),
+('ANGULAR_MOMENTUM', '{"fr": "moment angulaire", "en":"angular momentum"}', 'M.L^2.T^-1'),
+--
+('RADIO_ACTIVITY', '{"fr": "radioactivité", "en":"radioactivity"}', 'T^-1'),
+('ABSORBED_DOSE', '{"fr": "dose absorbée", "en":"absorbed dose"}', 'L^2.T^-2'),
+('EQUIVALENT_DOSE', '{"fr": "dose équivalente", "en":"equivalent dose"}', 'L^2.T^-2'),
+('CATALYTIC_ACTIVITY', '{"fr": "activité catalytique", "en":"catalytic activity"}', 'T^-1.N'),
+--
 ('ENTHALPY', '{"fr": "enthalpie", "en":"enthalpy"}', 'M.L^2.T^-2'),
 ('ENTROPY', '{"fr": "entropie", "en":"entropy"}', 'M.L^2.T^-2.θ^-1'),
---
-x('VOLTAGE', '{"fr": "tension électrique", "en":"electric voltage"}','M.L^2.T^-3.I^-1'),
-('INDUCTION', '{"fr": "induction magnétique", "en":"magnetic induction"}','M.T^-2.I^-1'),
-x('ELECTRIC_CHARGE', '{"fr": "charge électrique", "en":"electric charge"}', 'T.I'),
-x('ELECTRICAL_CAPACITANCE', '{"fr": "capacité électrique", "en":"electrical capacitance"}','M^-1.L^-2.T^4.I^2'),
-x('ELECTRICAL_CONDUCTANCE', '{"fr": "conductance électrique", "en":"electrical conducatance"}','M^-1.L^-2.T^3.I^2'),
-x('ELECTRICAL_RESISTANCE', '{"fr": "résistance électrique", "en":"electrical resistance"}','M.L^2.T^-3.I^-2'),
-x('ELECTRICAL_INDUCTANCE', '{"fr": "inductance électrique", "en":"electrical inductance"}','M.L^2.T^-2.I^-2'),
-x('MAGNETIC_FLUX', '{"fr": "flux magnétique", "en":"magnetic flux"}','M.L^2.T^-2.I^-1'),
-x('MAGNETIC_INDUCTION', '{"fr": "induction magnétique", "en":"magnetic induction"}','M.L^2.T^-2.I^-2'),
---
-x('LUMINOUS_FLUX', '{"fr": "flux lumineux", "en":"luminous flux"}', 'J.sr^-1'),
-x('ILLUMINANCE', '{"fr": "luminance", "en":"illuminance"}', 'J.m^-2'),
-('WEIGHT', '{"fr": "poids", "en":"weight"}', 'M.L.T^-2'),
-x('FORCE', '{"fr": "force", "en":"force"}', 'M.L.T^-2'),
-('TORQUE', '{"fr": "couple", "en":"torque"}', 'M.L^2.T^-2')
-x('PRESSURE', '{"fr": "pression", "en":"pressure"}', 'M.L^-1.T^-2'),
---
+-- economics
+('REVENUE', '{"fr": "revenu", "en":"revenue"}', '$'),
+('GDP', '{"fr": "PIB", "en":"GDP"}', '$')
 ;
 
 UPDATE measurements SET audit_trail = json_build_object(
@@ -549,10 +566,10 @@ INSERT INTO measurement_units(short_code, title, measurement_id) VALUES
 ('u', '{"fr": "masse atomique", "en": "atomic mass"}', (SELECT id FROM measurements WHERE short_code='MASS')),
 ('TeCO2', '{"fr": "tonne équivalent CO2", "en": "ton of CO2 equivalent"}', (SELECT id FROM measurements WHERE short_code='MASS')),
 -- substance
-('mol', '{"fr": "mole", "en": "mole"}', (SELECT id FROM measurements WHERE short_code='SUBSTANCE')),
+('mol', '{"fr": "mole", "en": "mole"}', (SELECT id FROM measurements WHERE short_code='QUANTITY_OF_SUBSTANCE')),
 -- force
-('N', '{"fr": "newton", "en": "newton"}', (SELECT id FROM measurements WHERE short_code='WEIGHT')),
-('daN', '{"fr": "deca newton", "en": "deca newton"}', (SELECT id FROM measurements WHERE short_code='WEIGHT')),
+('N', '{"fr": "newton", "en": "newton"}', (SELECT id FROM measurements WHERE short_code='FORCE')),
+('daN', '{"fr": "deca newton", "en": "deca newton"}', (SELECT id FROM measurements WHERE short_code='FORCE')),
 -- temperature
 ('K', '{"fr": "°Kelvin", "en": "°Kelvin"}', (SELECT id FROM measurements WHERE short_code='TEMPERATURE')),
 ('Cel', '{"fr": "°Celsius", "en": "°Celsius"}', (SELECT id FROM measurements WHERE short_code='TEMPERATURE')),
@@ -568,6 +585,10 @@ INSERT INTO measurement_units(short_code, title, measurement_id) VALUES
 ('km/h', '{"fr": "kilomètre/heure", "en": "kilometer/hour"}', (SELECT id FROM measurements WHERE short_code='SPEED')),
 ('mph', '{"fr": "mile/heure", "en": "mile/hour"}', (SELECT id FROM measurements WHERE short_code='SPEED')),
 -- rpm (tour par min)
+-- acceleration
+('m/s²', '{"fr": "mètre/seconde au carré", "en": "meter/second square"}', (SELECT id FROM measurements WHERE short_code='ACCELERATION')),
+('rad/s²', '{"fr": "radian/seconde au carré", "en": "radian/second square"}', (SELECT id FROM measurements WHERE short_code='ANGULAR_ACCELERATION')),
+('G', '{"fr": "G", "en": "G"}', (SELECT id FROM measurements WHERE short_code='ACCELERATION')),
 -- pressure
 ('Pa', '{"fr": "pascal", "en": "pascal"}', (SELECT id FROM measurements WHERE short_code='PRESSURE')),
 ('hPa', '{"fr": "hectopascal", "en": "hectopascal"}', (SELECT id FROM measurements WHERE short_code='PRESSURE')),
@@ -584,11 +605,13 @@ UPDATE measurement_units SET included_multiplier_id = (SELECT id FROM measuremen
 ALTER TABLE measurement_units ALTER COLUMN measurement_unit_system_id SET NOT NULL;
 ALTER TABLE measurement_units ALTER COLUMN included_multiplier_id SET NOT NULL;
 
+-- Define the standard unit (or the default one, if no standard is established) for any given measurement
 UPDATE measurement_units SET is_standard = true
 WHERE
 short_code IN (
-    'm', 's','kg','J', 'K', 'A', 'mol',
-    'W', 'm/s' , 'rad/s', 'Pa', 'cd' ,'V', 'N', 'C'
+    'm', 's','kg', 'K', 'A', 'mol', 'cd', 'rad',
+    'J', 'W', 'm/s' , 'rad/s', 'Pa', 'V', 'N', 'C',
+    'm/s²'
 );
 
 UPDATE measurement_units SET audit_trail = json_build_object(
@@ -598,6 +621,7 @@ UPDATE measurement_units SET audit_trail = json_build_object(
 -- TODO UPDATE measurement_units SET multiplier_included=
 
 CREATE TABLE measurement_unit_has_conversions (
+    -- TODO: key shoud include measurement | we don't want conversions between non-homogeneous things
     from_unit_id integer NOT NULL REFERENCES measurement_units(id),
     to_unit_id integer NOT NULL REFERENCES measurement_units(id),
     factor numeric NOT NULL DEFAULT 1,
@@ -607,6 +631,10 @@ CREATE TABLE measurement_unit_has_conversions (
     audit_trail json,
     PRIMARY KEY(from_unit_id, to_unit_id)
 );
+
+-- TODO: remove pluralization from names
+COMMENT ON TABLE mesurement_unit_has_conversions IS 
+'Conversion matrix between units corresponding to a given measurement';
 
 CREATE INDEX measurement_unit_conversions_reverse_idx ON measurement_unit_has_conversions(to_unit_id, from_unit_id);
 
@@ -619,6 +647,7 @@ ALTER TABLE themes
 ;
 
 COMMENT ON TABLE themes IS 'Themes for climate change analysis';
+
 -- TODO: add ESG thematics
 COMMENT ON COLUMN themes.short_code IS 'Theme short code key, uppercased, in the form of a hierarchical path, e.g. /{root theme}/{subtheme}[/...]';
 COMMENT ON COLUMN themes.tags IS 'Searchable tags, per language. Form is {"{lang}": [{"tag1"}, {"tag2"}...}]';
@@ -686,6 +715,8 @@ CREATE TABLE series (
     audit_trail jsonb NOT NULL DEFAULT '{}'
 );
 
+COMMENT ON TABLE series IS 'Metadata for all available time-series';
+
 -- make tags searchable
 CREATE INDEX series_by_tag ON series USING gist((tags::text) gist_trgm_ops);
 
@@ -700,6 +731,8 @@ CREATE TABLE series_has_themes (
     audit_trail jsonb NOT NULL DEFAULT '{}',
     PRIMARY KEY(series_id, theme_id)
 );
+
+COMMENT ON TABLE series_has_themes IS 'Thematic tagging of series';
 
 CREATE TABLE series_has_owners (
     series_id integer NOT NULL REFERENCES series(id),
@@ -757,7 +790,7 @@ CREATE TABLE constant_has_measurement_domains (
 
 CREATE TABLE series_produces_versions (
     series_id integer NOT NULL REFERENCES series(id),
-    version text NOT NULL DEFAULT 'v0.0.0',
+    version text NOT NULL DEFAULT 'v0.0.0', -- TODO: use semver data type
     versioned_series_id uuid NOT NULL DEFAULT uuid_generate_v4() UNIQUE,
     version_owner_id uuid NOT NULL REFERENCES owners(id),
     version_status_id integer NOT NULL REFERENCES object_statuses(id),
@@ -772,6 +805,7 @@ CREATE TABLE series_produces_versions (
     PRIMARY KEY(series_id, version)
 );
 
+-- series values should be stored in an external storage, e.g. influxDB
 CREATE TABLE versioned_timeseries (
     versioned_series_id uuid NOT NULL REFERENCES series_produces_versions(versioned_series_id),
     started_at date NOT NULL,
