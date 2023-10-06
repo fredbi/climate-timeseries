@@ -9,10 +9,10 @@ COMMENT ON EXTENSION "uuid-ossp" IS 'Add support for uuid extra type';
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 COMMENT ON EXTENSION "pg_trgm" IS 'Add support for simple text search, by text similarity';
 
--- TODO: enable full text search on desriptions
--- check if container enables this
--- extension not available on heroku
--- CREATE EXTENSION IF NOT EXISTS semver;
+CREATE EXTENSION IF NOT EXISTS semver;
+COMMENT ON EXTENSION "semver" IS 'Add support for semver operators';
+
+-- TODO: enable full text search on descriptions
 
 CREATE TABLE nomenclatures(
     id serial NOT NULL PRIMARY KEY,
@@ -40,35 +40,50 @@ CREATE TABLE all_nomenclatures(
 COMMENT ON TABLE nomenclatures IS 'A list of all nomenclature classes, with some UI metadata consumed by admin interfaces';
 
 INSERT INTO all_nomenclatures(class, table_name, title, metadata) VALUES
-  ('OWNER', 'owners', '{"fr": "propriétaires de données", "en" :"data owners"}',
+  ('OWNER', 'owners', 
+     '{"fr": "propriétaires de données", "en" :"data owners"}',
      '{"from_template":false}'),
-  ('ROLE', 'roles', '{"fr": "rôles utilisateur", "en" :"user roles"}',
+  ('ROLE', 'roles', 
+     '{"fr": "rôles utilisateur", "en" :"user roles"}',
      '{"from_template":true}'),
-  ('PERIOD', 'time_periods', '{"fr": "périodes temporelles", "en" :"time period"}',
+  ('PERIOD', 'time_periods', 
+     '{"fr": "périodes temporelles", "en" :"time period"}',
      '{"from_template":true}'),
-  ('SOURCE', 'data_sources', '{"fr": "sources de données", "en" :"data sources"}',
+  ('SOURCE', 'data_sources', 
+    '{"fr": "sources de données", "en" :"data sources"}',
      '{"from_template":true, "extra_fields": ["rating", "tags"], "tag_search": true}'),
-  ('ZONE', 'zones', '{"fr": "zonages", "en" :"zoning"}',
+  ('ZONE', 'zones', 
+     '{"fr": "zonages géographiques", "en" :"geographical zoning"}',
      '{"from_template":true, "extra_fields": ["zone_type_id", "zone_geometry"], "has_one_class": {"ZTYPE": "zone_type_id"}}'),
-  ('ZTYPE', 'zone_types', '{"fr": "types de zones", "en" :"zone types"}',
+  ('ZTYPE', 'zone_types', 
+     '{"fr": "types de zones", "en" :"zone types"}',
      '{"from_template":true}'),
-  ('MEASUREMENT', 'measurements', '{"fr": "grandeurs physiques", "en" :"physical measurements"}',
+  ('MEASUREMENT', 'measurements', 
+     '{"fr": "grandeurs physiques", "en" :"physical measurements"}',
      '{"from_template":true, "has_zero_many_class": {"MDOMAIN": "measurement_has_measurement_domains"}}'),
-  ('MDOMAIN', 'measurement_domains', '{"fr": "domaines de mesure", "en" :"measurement domains"}',
+  ('MDOMAIN', 'measurement_domains', 
+     '{"fr": "domaines de mesure", "en" :"measurement domains"}',
      '{"from_template":true}'),
-  ('MDIMENSIONS', 'measurement_dimensions', '{"fr": "dimensions de mesures physiques", "en" :"physical measurements dimensions"}',
+  ('MDIMENSIONS', 'measurement_dimensions', 
+     '{"fr": "dimensions de mesures physiques", "en" :"physical measurements dimensions"}',
      '{"from_template":true}'),
-  ('MUSYSTEM', 'measurement_unit_systems', '{"fr": "systèmes d''unités de mesure", "en" :"measurement unit systems"}',
+  ('MUSYSTEM', 'measurement_unit_systems', 
+     '{"fr": "systèmes d''unités de mesure", "en" :"measurement unit systems"}',
      '{"from_template":true}'),
-  ('MUNIT', 'measurement_units', '{"fr": "unités de mesure", "en" :"measurement units"}',
+  ('MUNIT', 'measurement_units', 
+     '{"fr": "unités de mesure", "en" :"measurement units"}',
      '{"from_template":true, "extra_fields": ["measurement_id", "measurement_unit_system_id"], "has_one_class":{"MEASUREMENT": "measurement_id", "MUSYSTEM": "measurement_unit_system_id"}}'),
-  ('THEME', 'themes', '{"fr": "thématiques", "en" :"themes"}',
+  ('THEME', 'themes', 
+     '{"fr": "thématiques", "en" :"themes"}',
      '{"from_template":true, "extra_fields": ["tags", "linked_documents"], "has_one_class":{"MEASUREMENT": "measurement_id", "MUSYSTEM": "measurement_unit_system_id"}, "tag_search": true}'),
-  ('STATUS', 'object_statuses', '{"fr": "statuts d''un object", "en" :"object statuses"}',
+  ('STATUS', 'object_statuses', 
+     '{"fr": "statuts d''un object", "en" :"object statuses"}',
      '{"from_template":true}'),
-  ('OSTATUS', 'owner_statuses', '{"fr": "statuts utilisateurs", "en" :"user statuses"}',
+  ('OSTATUS', 'owner_statuses', 
+     '{"fr": "statuts utilisateurs", "en" :"user statuses"}',
      '{"from_template":true}'),
-  ('CONSTANT', 'constants', '{"fr": "constantes physiques et mathématiques", "en" :"physical and mathematical constants"}',
+  ('CONSTANT', 'constants', 
+     '{"fr": "constantes physiques et mathématiques", "en" :"physical and mathematical constants"}',
      '{"from_template":true, "extra_fields": ["symbol", "value", "metadata", "measurement_unit_id"], "has_zero_one_class": {"MUNIT": "measurement_unit_id"}}')
 ;
 
@@ -112,7 +127,10 @@ INSERT INTO roles(short_code, title) VALUES
 ;
 
 UPDATE roles SET audit_trail = json_build_object(
-    'created_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 'created_by', 'admin', 'updated_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 'last_updated_by', 'admin'
+    'created_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 
+    'created_by', 'admin', 
+    'updated_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 
+    'last_updated_by', 'admin'
 );
 
 CREATE TABLE time_periods(LIKE nomenclatures INCLUDING ALL);
@@ -125,7 +143,10 @@ INSERT INTO time_periods(short_code, title) VALUES
 ;
 
 UPDATE time_periods SET audit_trail = json_build_object(
-    'created_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 'created_by', 'admin', 'updated_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 'last_updated_by', 'admin'
+    'created_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 
+    'created_by', 'admin', 
+    'updated_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 
+    'last_updated_by', 'admin'
 );
 
 CREATE TABLE data_sources(LIKE nomenclatures INCLUDING ALL);
@@ -135,6 +156,8 @@ ALTER TABLE data_sources
   ADD COLUMN
     tags json NOT NULL DEFAULT '{}'
 ;
+
+COMMENT ON TABLE data_sources IS 'The list of legit data sources for generally available time-series (not owned by a specific author)';
 
 INSERT INTO data_sources(short_code, title) VALUES
   ('GIEC', '{"fr": "GIEC", "en": "GIEC"}'),
@@ -161,6 +184,8 @@ CREATE INDEX data_sources_by_tag ON data_sources USING gist((tags::text) gist_tr
 
 CREATE TABLE zone_types(LIKE nomenclatures INCLUDING ALL);
 
+COMMENT ON TABLE zone_types IS 'Categories for geographical zones';
+
 INSERT INTO zone_types(short_code, title) VALUES
 ('WORLD', '{"fr": "monde", "en": "world"}'),
 ('COUNTRY', '{"fr": "pays", "en": "country"}'),
@@ -178,12 +203,16 @@ UPDATE zone_types SET audit_trail = json_build_object(
 
 CREATE TABLE zones(LIKE nomenclatures INCLUDING ALL);
 
+COMMENT ON TABLE zone IS 'Geographical zones to associate to time series';
+
 ALTER TABLE zones
   ADD COLUMN
     zone_type_id integer REFERENCES zone_types(id),
   ADD COLUMN
     zone_geometry geometry(Geometry,4326)
 ;
+
+-- TODO: populate geometry for zones
 
 INSERT INTO zones(short_code, title,zone_type_id) VALUES
 ('WORLD' , '{"fr": "Monde", "en": "World"}', (SELECT id FROM zone_types WHERE short_code='WORLD')),
@@ -236,7 +265,11 @@ UPDATE zones SET audit_trail = json_build_object(
 
 CREATE TABLE measurement_dimensions(LIKE nomenclatures INCLUDING ALL);
 
-COMMENT ON TABLE measurement_dimensions IS 'Universal dimensions for physical and economic measurements';
+COMMENT ON TABLE measurement_dimensions IS
+'Fundamental dimensions for units, '
+'as per the International System of Quantities, extended with monetary for economic measurements. '
+'Angle units are considered special as dimensionless measurements.'
+;
 
 INSERT INTO measurement_dimensions(short_code, title) VALUES
 ('L', '{"fr": "longueur", "en": "length"}'),
@@ -246,6 +279,9 @@ INSERT INTO measurement_dimensions(short_code, title) VALUES
 ('I', '{"fr": "intensité électrique", "en": "electric intensity"}'),
 ('J', '{"fr": "intensité lumineuse", "en": "light intensity"}'),
 ('θ', '{"fr": "température", "en": "temperature"}'),
+-- not a fundamental unit, but so special in their definition that they deserve a slot here
+('rad', '{"fr": "angle", "en": "angle"}'),
+('sr', '{"fr": "angle solide", "en": "solid angle"}'),
 -- not a physical measurement, but it matters too
 ('$', '{"fr": "monnaie", "en": "money"}')
 ;
@@ -262,40 +298,59 @@ ALTER TABLE measurements
 ;
 
 COMMENT ON TABLE measurements IS 'Physical and economic measurements';
-COMMENT ON COLUMN measurements.dimensions IS 'Formula describing the dimension of the measurement, expressed in terms of universal dimensions (e.g. length, mass, time...)';
+COMMENT ON COLUMN measurements.dimensions IS
+'Formula describing the dimension of the measurement, '
+'expressed in terms of universal dimensions (e.g. length, mass, time...).'
+'Measurements corresponds to measurable physical or economical quantities, '
+'together with their measurement dimensions.'
+;
 
 INSERT INTO measurements(short_code, title, dimensions) VALUES
 -- dimension-less measurements
 ('QUANTITY', '{"fr": "quantité (unités)", "en":"amount (units)"}',NULL),
-('ANGLE', '{"fr": "angle", "en":"angle"}',NULL),
+x('ANGLE', '{"fr": "angle", "en":"angle"}','rad'),
+x('SOLID_ANGLE', '{"fr": "angle solide", "en":"solid angle"}','sr'),
 -- non-physical: money
 ('CURRENCY', '{"fr": "devise", "en":"currency"}', '$'),
 -- the 7 base measurements recognized by the international system
 ('LENGTH', '{"fr": "longueur (distance)", "en":"length (distance)"}', 'L'),
-('TIME', '{"fr": "temps", "en":"time"}', 'T'),
 ('MASS', '{"fr": "masse", "en":"mass"}', 'M'),
+('TIME', '{"fr": "temps", "en":"time"}', 'T'),
 ('ELECTRIC_INTENSITY', '{"fr": "intensité électrique", "en":"electric intensity"}', 'I'),
 ('TEMPERATURE', '{"fr": "temperature", "en":"temperature"}', 'θ'),
 ('LIGHT_INTENSITY', '{"fr": "intensité lumineuse", "en":"light intensity"}', 'J'),
-('SUBSTANCE', '{"fr": "quantité de matière", "en":"amount of substance"}', 'N'),
+('AMOUNT_OF_SUBSTANCE', '{"fr": "quantité de matière", "en":"amount of substance"}', 'N'),
 -- derived measurements
 ('AREA', '{"fr": "surface", "en":"area"}','L^2'),
 ('VOLUME', '{"fr": "volume", "en":"volume"}', 'L^3'),
-('FREQUENCY', '{"fr": "fréquence", "en":"fréquence"}', 'T^-1'),
-('VOLMASS', '{"fr": "masse volumique", "en":"volumic mass"}', 'M.L^-3'),
+--
+x('FREQUENCY', '{"fr": "fréquence", "en":"fréquence"}', 'T^-1'),
+('VOLUMIC_MASS', '{"fr": "masse volumique", "en":"volumic mass"}', 'M.L^-3'),
+('SPEED', '{"fr": "vitesse", "en":"speed"}', 'L.T^-1'),
 ('ACCELERATION', '{"fr": "accélération", "en":"acceleration"}', 'L.T^-2'),
-('ELECTRIC_CHARGE', '{"fr": "charge électrique", "en":"electric charge"}', 'T.I'),
-('ENERGY', '{"fr": "énergie", "en":"energy"}', 'M.L^2.T^-2'),
+--
+x('ENERGY', '{"fr": "énergie", "en":"energy"}', 'M.L^2.T^-2'),
+x('POWER', '{"fr": "puissance", "en":"power"}', 'M.L^2.T^-3'),
 ('ENTHALPY', '{"fr": "enthalpie", "en":"enthalpy"}', 'M.L^2.T^-2'),
 ('ENTROPY', '{"fr": "entropie", "en":"entropy"}', 'M.L^2.T^-2.θ^-1'),
-('POWER', '{"fr": "puissance", "en":"power"}', 'M.L^2.T^-3'),
-('PRESSURE', '{"fr": "pression", "en":"pressure"}', 'M.L^-1.T^-2'),
-('SPEED', '{"fr": "vitesse", "en":"speed"}', 'L.T^-1'),
-('VOLTAGE', '{"fr": "tension électrique", "en":"electric voltage"}','M.L^2.T^-3.I^-1'),
+--
+x('VOLTAGE', '{"fr": "tension électrique", "en":"electric voltage"}','M.L^2.T^-3.I^-1'),
 ('INDUCTION', '{"fr": "induction magnétique", "en":"magnetic induction"}','M.T^-2.I^-1'),
+x('ELECTRIC_CHARGE', '{"fr": "charge électrique", "en":"electric charge"}', 'T.I'),
+x('ELECTRICAL_CAPACITANCE', '{"fr": "capacité électrique", "en":"electrical capacitance"}','M^-1.L^-2.T^4.I^2'),
+x('ELECTRICAL_CONDUCTANCE', '{"fr": "conductance électrique", "en":"electrical conducatance"}','M^-1.L^-2.T^3.I^2'),
+x('ELECTRICAL_RESISTANCE', '{"fr": "résistance électrique", "en":"electrical resistance"}','M.L^2.T^-3.I^-2'),
+x('ELECTRICAL_INDUCTANCE', '{"fr": "inductance électrique", "en":"electrical inductance"}','M.L^2.T^-2.I^-2'),
+x('MAGNETIC_FLUX', '{"fr": "flux magnétique", "en":"magnetic flux"}','M.L^2.T^-2.I^-1'),
+x('MAGNETIC_INDUCTION', '{"fr": "induction magnétique", "en":"magnetic induction"}','M.L^2.T^-2.I^-2'),
+--
+x('LUMINOUS_FLUX', '{"fr": "flux lumineux", "en":"luminous flux"}', 'J.sr^-1'),
+x('ILLUMINANCE', '{"fr": "luminance", "en":"illuminance"}', 'J.m^-2'),
 ('WEIGHT', '{"fr": "poids", "en":"weight"}', 'M.L.T^-2'),
-('FORCE', '{"fr": "force", "en":"force"}', 'M.L.T^-2'),
+x('FORCE', '{"fr": "force", "en":"force"}', 'M.L.T^-2'),
 ('TORQUE', '{"fr": "couple", "en":"torque"}', 'M.L^2.T^-2')
+x('PRESSURE', '{"fr": "pression", "en":"pressure"}', 'M.L^-1.T^-2'),
+--
 ;
 
 UPDATE measurements SET audit_trail = json_build_object(
@@ -325,6 +380,8 @@ INSERT INTO measurement_domains(short_code, title) VALUES
 ('RADIOLOGY', '{"fr": "radiologie", "en":"radiology"}'),
 ('THERMAL', '{"fr": "thermique", "en":"thermal"}')
 ;
+
+COMMENT ON TABLE measurement_domains IS 'Engineering, scientific or economics domains used to tag time series and measurement units';
 
 UPDATE measurement_domains SET audit_trail = json_build_object(
     'created_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 'created_by', 'admin', 'updated_at', to_char(current_timestamp,'YYYYMMDDHHMI'), 'last_updated_by', 'admin'
@@ -364,7 +421,7 @@ CREATE TABLE measurement_unit_systems(LIKE nomenclatures INCLUDING ALL);
 INSERT INTO measurement_unit_systems(short_code, title) VALUES
 ('METRIC', '{"fr": "système métrique", "en":"metric system"}'),
 ('IMPERIAL', '{"fr": "système impérial (US)", "en":"impérial system (US)"}'),
-('BSU', '{"fr": "système britanique (UK)", "en":"British standard system (US)"}'),
+('BSU', '{"fr": "système britannique (UK)", "en":"British standard system (US)"}'),
 ('DOMAIN', '{"fr": "unité usuelle", "en":"customary unit"}'),
 ('NONE', '{"fr": "aucun système", "en":"no system"}')
 ;
@@ -493,7 +550,7 @@ INSERT INTO measurement_units(short_code, title, measurement_id) VALUES
 ('TeCO2', '{"fr": "tonne équivalent CO2", "en": "ton of CO2 equivalent"}', (SELECT id FROM measurements WHERE short_code='MASS')),
 -- substance
 ('mol', '{"fr": "mole", "en": "mole"}', (SELECT id FROM measurements WHERE short_code='SUBSTANCE')),
--- weight
+-- force
 ('N', '{"fr": "newton", "en": "newton"}', (SELECT id FROM measurements WHERE short_code='WEIGHT')),
 ('daN', '{"fr": "deca newton", "en": "deca newton"}', (SELECT id FROM measurements WHERE short_code='WEIGHT')),
 -- temperature
@@ -504,11 +561,13 @@ INSERT INTO measurement_units(short_code, title, measurement_id) VALUES
 ('A', '{"fr": "ampère", "en": "ampere"}', (SELECT id FROM measurements WHERE short_code='ELECTRIC_INTENSITY')),
 ('V', '{"fr": "volt", "en": "volt"}', (SELECT id FROM measurements WHERE short_code='VOLTAGE')),
 ('C', '{"fr": "coulomb", "en": "coulomb"}', (SELECT id FROM measurements WHERE short_code='ELECTRIC_CHARGE')),
+-- Henri, Ohm, Coulomb, Siemens, farad, ...
 -- speed
 ('m/s', '{"fr": "mètre/seconde", "en": "meter/second"}', (SELECT id FROM measurements WHERE short_code='SPEED')),
 ('rad/s', '{"fr": "radian/seconde", "en": "radian/second"}', (SELECT id FROM measurements WHERE short_code='SPEED')),
 ('km/h', '{"fr": "kilomètre/heure", "en": "kilometer/hour"}', (SELECT id FROM measurements WHERE short_code='SPEED')),
 ('mph', '{"fr": "mile/heure", "en": "mile/hour"}', (SELECT id FROM measurements WHERE short_code='SPEED')),
+-- rpm (tour par min)
 -- pressure
 ('Pa', '{"fr": "pascal", "en": "pascal"}', (SELECT id FROM measurements WHERE short_code='PRESSURE')),
 ('hPa', '{"fr": "hectopascal", "en": "hectopascal"}', (SELECT id FROM measurements WHERE short_code='PRESSURE')),
@@ -516,6 +575,7 @@ INSERT INTO measurement_units(short_code, title, measurement_id) VALUES
 ('millibar', '{"fr": "millibar", "en": "millibar"}', (SELECT id FROM measurements WHERE short_code='PRESSURE')),
 -- light
 ('cd', '{"fr": "candela", "en": "candela"}', (SELECT id FROM measurements WHERE short_code='LIGHT_INTENSITY'))
+-- radio-activity/radiations
 ;
 
 UPDATE measurement_units SET measurement_unit_system_id = (SELECT id FROM measurement_unit_systems WHERE short_code = 'NONE');
@@ -542,7 +602,7 @@ CREATE TABLE measurement_unit_has_conversions (
     to_unit_id integer NOT NULL REFERENCES measurement_units(id),
     factor numeric NOT NULL DEFAULT 1,
     intercept numeric NOT NULL DEFAULT 0,
-    formula text,
+    formula text, -- TODO: check constraint
     reverse_formula text,
     audit_trail json,
     PRIMARY KEY(from_unit_id, to_unit_id)
@@ -559,6 +619,7 @@ ALTER TABLE themes
 ;
 
 COMMENT ON TABLE themes IS 'Themes for climate change analysis';
+-- TODO: add ESG thematics
 COMMENT ON COLUMN themes.short_code IS 'Theme short code key, uppercased, in the form of a hierarchical path, e.g. /{root theme}/{subtheme}[/...]';
 COMMENT ON COLUMN themes.tags IS 'Searchable tags, per language. Form is {"{lang}": [{"tag1"}, {"tag2"}...}]';
 
